@@ -2,7 +2,7 @@
 
 
 import json
-
+import math
 
 #lambda functions for rounding
 ro1, ro2, ro6, ro8 = lambda x : round(x, 1), lambda x : round(x, 2), lambda x : round(x, 6), lambda x : round(x, 8)
@@ -14,6 +14,7 @@ jsonInAddr = 'data/OGgecko.json'
 with open(jsonInAddr, 'r') as f:
 	geckoData = json.load(f)
 
+geckoKeys = list(geckoData.keys())
 
 
 def percentChange(fromNum, toNum):
@@ -161,9 +162,8 @@ def pChangeStatsFunc(analysisDict):
 		#print(currentData)
 	return analysisDict
 
-quoteKeys = list(geckoData.keys())
-for quoteKey in quoteKeys:
-	currentTokenDict = geckoData[quoteKey]
+for geckoKey in geckoKeys:
+	currentTokenDict = geckoData[geckoKey]
 	pChangeStatTest = pChangeStatsFunc(currentTokenDict)
 
 
