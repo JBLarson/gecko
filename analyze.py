@@ -124,6 +124,7 @@ def pChangeStatsFunc(analysisDict):
 	#print("52 Week High: " + str(currentHigh) + " on: " + str(currentHighDate))
 	#print("52 Week Low: " + str(currentLow) + " on: " + str(currentLowDate) + "\n")
 	currentDateList = list(currentData.keys())
+	maxPchangeDict, minPchangeDict, avgPchangeDict = {}, {}, {}
 	for date in currentDateList:
 		datePrice = currentData[date]
 		maxPchange = ro6(percentChange(currentHigh, datePrice))
@@ -131,11 +132,16 @@ def pChangeStatsFunc(analysisDict):
 		avgPchange = ro6(percentChange(currentAvg, datePrice))
 		#print("Price: " + str(ro6(datePrice)) + " on: " + str(date))
 		#print("pChange max: " + str(maxPchange) + "% pChange min: " + str(minPchange) + "% pChange Avg: " + str(avgPchange) + "%\n")
-		maxP, minP, avgP = str(date) + '_maxP', str(date)+'_minP', str(date)+'_avgP'
-		pChangeDict = {maxP: maxPchange, minP: minPchange, avgP: avgPchange}
+		maxPchangeDict.update({date: maxPchange})
+		minPchangeDict = {date: minPchange}
+		avgPchangeDict = {date: avgPchange}
 
 		#pChangeDict = {'maxPchange': maxPchange, "minPchange": minPchange, 'avgPchange': avgPchange}
-		currentData.update(pChangeDict)
+	analysisDict.update({'maxP': maxPchangeDict})
+	analysisDict.update({'minP': minPchangeDict})
+	analysisDict.update({'avgP': avgPchangeDict})
+
+
 		#print(currentData)
 	return analysisDict
 
@@ -185,36 +191,6 @@ analyzeAll = analyzeAllTokens(geckoData)
 
 analyzeAll.sort(key=sortByPair)
 
-def analysisFunc2(analysisDicts):
-	for analysisDict in analysisDicts:
-
-		currentPair = analysisDict['pair']
-		currentAvg = analysisDict['avg']
-		currentLowDate = list(analysisDict['min'].keys())[0]
-		currentLow = analysisDict['min'][currentLowDate]
-		currentHighDate = list(analysisDict['max'].keys())[0]
-		currentHigh = analysisDict['max'][currentHighDate]
-		geckoDataEur = geckoData['eur']
-		geckoDataUsd = geckoData['usd']
-
-		print("\n\n"+ str(currentPair))
-		print("52 Week Avg: " + str(currentAvg))
-		print("52 Week High: " + str(currentHigh) + " on: " + str(currentHighDate))
-		print("52 Week Low: " + str(currentLow) + " on: " + str(currentLowDate))
-
-
-		if 'usd' in currentPair.lower():
-			currentGeckoData = geckoDataUsd[currentPair]['data']
-		if 'eur' in currentPair.lower():
-			currentGeckoData = geckoDataEur[currentPair]['data']
-
-		geckoKeys = list(currentGeckoData.keys())
-		for key in geckoKeys:
-			print(str(key) + " " + str(currentGeckoData[key]))
-
-analysis2 = analysisFunc2(analyzeAll)
-
-print(analysis2)
 
 #describeAnalysis = describeAnalysisFunc(analyzeAll)#
 
