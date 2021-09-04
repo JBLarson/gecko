@@ -100,6 +100,22 @@ for aDict in analyzeAll:
 
 
 
+def stdDevFunc(currentGeckoDict):
+	currentPriceData = currentGeckoDict['data']
+	currentAvg = currentGeckoDict['avg']
+	currentMeanDevSquaredSum = 0
+	for currentDate in currentPriceData:
+		currentPrice = currentPriceData[currentDate]
+		currentMeanDeviation = currentPrice - currentAvg
+		currentMeanDevSquaredSum += currentMeanDeviation * currentMeanDeviation
+	currentVariance = currentMeanDevSquaredSum / len(currentPriceData)
+	currentStdDev = math.sqrt(currentVariance)
+	return currentStdDev
+
+for geckoKey in geckoKeys:
+	currentGdict = geckoData[geckoKey]
+	stdDev = stdDevFunc(currentGdict)
+	currentGdict.update({'stdDev': stdDev})
 
 
 
