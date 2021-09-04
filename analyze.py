@@ -3,11 +3,22 @@
 
 import json
 
+
+#lambda functions for rounding
+ro1, ro2, ro6, ro8 = lambda x : round(x, 1), lambda x : round(x, 2), lambda x : round(x, 6), lambda x : round(x, 8)
+
+
 # import coinGecko data
 jsonInAddr = 'data/OGgecko.json'
 
 with open(jsonInAddr, 'r') as f:
 	geckoData = json.load(f)
+
+
+
+def percentChange(fromNum, toNum):
+	pChange = ((toNum - fromNum)/fromNum)*100
+	return pChange
 
 
 # function that returns 52W-high
@@ -73,19 +84,69 @@ def analyzeAllTokens(geckoData):
 
 analyzeAll = analyzeAllTokens(geckoData)
 
-for aDict in analyzeAll[0:1]:
+for aDict in analyzeAll:
 	aDictPair = aDict['pair']
 	
-	print("\n\n" + str(aDictPair))
 	baseKeys = geckoData.keys()
 	for baseKey in baseKeys:
 		currentGeckoDict = geckoData[baseKey]
-		print(aDict)
-		currentGeckoDict.update(aDict)
-		#print(currentGeckoDict)
-		#print(currentGeckoDict.keys())
-print(geckoData['AdaUsd'])
-		#[aDictPair]
+		currentGekkoQuote = currentGeckoDict['quote']
+		currentGekkoBase = currentGeckoDict['base']
+		currentGekkoPair = str(currentGekkoQuote).capitalize() + str(currentGekkoBase).capitalize()
+		if aDictPair == currentGekkoPair:
+			currentGeckoDict.update(aDict)
+
+
+
+
+
+
+
+
+# Need function to find percent change from 30Day low, high, and avg
+# I.E. Need function to find 30Day low, high, and avg
+
+
+
+
+
+# function to find percent change from 52Week low, high, and avg
+def pChangeStatsFunc(analysisDict):
+	#print(analysisDict)
+	currentPair = analysisDict['pair']
+	currentAvg = ro6(analysisDict['avg'])
+	currentLowDate = list(analysisDict['min'].keys())[0]
+	currentLow = ro6(analysisDict['min'][currentLowDate])
+	currentHighDate = list(analysisDict['max'].keys())[0]
+	currentHigh = ro6(analysisDict['max'][currentHighDate])
+	currentData = analysisDict['data']
+	#print("\n" + str(currentPair) + "52W Avg: $" + str(currentAvg))
+	#print("52 Week High: " + str(currentHigh) + " on: " + str(currentHighDate))
+	#print("52 Week Low: " + str(currentLow) + " on: " + str(currentLowDate) + "\n")
+	currentDateList = list(currentData.keys())
+	for date in currentDateList:
+		datePrice = currentData[date]
+		maxPchange = ro6(percentChange(currentHigh, datePrice))
+		minPchange = ro6(percentChange(currentLow, datePrice))
+		avgPchange = ro6(percentChange(currentAvg, datePrice))
+		#print("Price: " + str(ro6(datePrice)) + " on: " + str(date))
+		#print("pChange max: " + str(maxPchange) + "% pChange min: " + str(minPchange) + "% pChange Avg: " + str(avgPchange) + "%\n")
+		maxP, minP, avgP = str(date) + '_maxP', str(date)+'_minP', str(date)+'_avgP'
+		pChangeDict = {maxP: maxPchange, minP: minPchange, avgP: avgPchange}
+
+		#pChangeDict = {'maxPchange': maxPchange, "minPchange": minPchange, 'avgPchange': avgPchange}
+		currentData.update(pChangeDict)
+		#print(currentData)
+	return analysisDict
+
+quoteKeys = list(geckoData.keys())
+for quoteKey in quoteKeys:
+	currentTokenDict = geckoData[quoteKey]
+	pChangeStatTest = pChangeStatsFunc(currentTokenDict)
+
+
+
+
 
 
 jsonOutAddr = 'data/geckoAnalysis.json'
