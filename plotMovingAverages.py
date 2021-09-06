@@ -31,30 +31,34 @@ adaUsd = geckoData['AdaUsd']
 adaUsdMovingAvg = adaUsd['movingAvg30']
 adaUsdPrices = adaUsd['data']
 adaUsdStdDev = adaUsd['stdDev']
+adaUsdVolume = adaUsd['volumeData']
 
 movingAvgKeys = list(adaUsdMovingAvg.keys())
 
 
-smaDates, smaPrices, prices = [], [], []
+smaDates, smaPrices, prices, volumes = [], [], [], []
 
 for key in movingAvgKeys:
 	smaDates.append(key)
 	smaPrices.append(adaUsdMovingAvg[key])
 	prices.append(adaUsdPrices[key])
+	volumes.append(adaUsdVolume[key])
 
 
-
-#plt.subplot(121)
+plt.subplot(211)
 plt.plot(smaDates, smaPrices)
 #plt.title('AdaUsd Simple Moving Average')
 
+plt.ylabel('Price')
 
-#plt.subplot(122)
 plt.plot(smaDates, prices)
 plt.title('AdaUsd Prices and SMA')
 
+plt.subplot(212)
+plt.plot(smaDates, volumes)
+plt.title('AdaUsd Volume')
+plt.ylabel('Volume')
 
-#plt.ylabel('Price')
 #plt.xlabel('Dates')
 
 plt.show()
