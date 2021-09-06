@@ -2,7 +2,6 @@
 
 import time
 import datetime
-import requests
 import json
 from geckoFuncz import unixToDatetime, datetimeToUnix
 
@@ -43,17 +42,21 @@ def getCoinDict(coin, baseCurrency, fromTimeStamp, toTimestamp):
 
 	coinApiRez = cg.get_coin_market_chart_range_by_id(id=coin, vs_currency=baseCurrency, from_timestamp=fromTimeStamp, to_timestamp=toTimestamp) # coin gecko coinApiRez
 	coinRezPrices = coinApiRez['prices']
-	priceDict = {}
+	coinRezVolumes = coinApiRez['total_volumes']
+
+	volumeDict, priceDict = {}, {}
 	for price in coinRezPrices:
-		
+		priceIndex = coinRezPrices.index(price)
 		unixTime = price[0]
+		volume = coinRezVolumes[priceIndex][1]
 		unixTime = int(str(unixTime)[:-3])
 		price = price[1]
 		localDT = unixToDatetime(unixTime)
 
 		priceDict.update({localDT: price})
+		volumeDict.update({localDT: volume})
 
-	returnDict = {"base": baseCurrency, "quote": coin, "data": priceDict}
+	returnDict = {"base": baseCurrency, "quote": coin, "data": priceDict, "volumeData": volumeDict}
 
 	return returnDict
 
