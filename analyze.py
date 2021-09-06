@@ -4,7 +4,8 @@ from geckoFuncz import thirtyDayFunc, dataFor30Func, analyzeTokenFunc, stdDevFun
 import json
 import math
 import dateparser
-import datetime
+from datetime import datetime, timedelta, date
+from time import strftime
 
 #lambda functions for rounding
 ro1, ro2, ro6, ro8 = lambda x : round(x, 1), lambda x : round(x, 2), lambda x : round(x, 6), lambda x : round(x, 8)
@@ -149,9 +150,9 @@ def thirtyDayFunc(ogDt):
 	for dayCounter in range(15):
 		dayCounter = dayCounter+1
 		dtDt = dateparser.parse(ogDt)
-		addDaysFull = dtDt + datetime.timedelta(days = dayCounter)
+		addDaysFull = dtDt + timedelta(days = dayCounter)
 
-		subtractDaysFull = dtDt - datetime.timedelta(days = dayCounter)
+		subtractDaysFull = dtDt - timedelta(days = dayCounter)
 
 		addDaysSplit = str(addDaysFull).split(" ")
 		subtractDaysSplit = str(subtractDaysFull).split(" ")
