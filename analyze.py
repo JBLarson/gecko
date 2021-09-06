@@ -1,11 +1,20 @@
 #!/usr/bin/python3
 
-
+from geckoFuncz import thirtyDayFunc, dataFor30Func, analyzeTokenFunc, stdDevFunc2
 import json
 import math
+import dateparser
+import datetime
 
 #lambda functions for rounding
 ro1, ro2, ro6, ro8 = lambda x : round(x, 1), lambda x : round(x, 2), lambda x : round(x, 6), lambda x : round(x, 8)
+
+
+time = datetime.now()
+dtRn = str(strftime("%x") + " " + strftime("%X"))
+justTime, justDate = strftime("%X"), strftime("%x")
+print("\nStarted sort on: " + str(justDate) + " at: " + str(justTime) + "\n")
+
 
 
 # import coinGecko data
@@ -57,19 +66,6 @@ def listAvgFunc(targetDict):
 	return avgRate
 
 
-# function that returns avg, 52W-low, and 52W-high
-def analyzeTokenFunc(targetDict):
-	#targetDict = geckoData[targetBase.lower()][targetPair]['data']
-	targetQuote, targetBase = targetDict['quote'], targetDict['base']
-	targetDictList = targetDict['data']
-	targetPair = str(targetQuote).capitalize() + str(targetBase).capitalize()
-	listAvgPrice = listAvgFunc(targetDictList)
-	listMinPrice = listMinFunc(targetDictList)
-	listMaxPrice = listMaxFunc(targetDictList)
-	listAnalysis = {'pair': targetPair, 'avg': listAvgPrice, 'max': listMaxPrice, 'min': listMinPrice}
-
-	return listAnalysis
-
 
 # function to run analysis function on all pairs in gecko dictionary
 def analyzeAllTokens(geckoData):
@@ -120,53 +116,116 @@ for geckoKey in geckoKeys:
 
 
 
-# Need function to find percent change from 30Day low, high, and avg
-# I.E. Need function to find 30Day low, high, and avg
+
+def dataFor30Func(dataSet, centerDate):
+	thirtyDayList = thirtyDayFunc(centerDate)
+	analysisDict = {}
+	dateKeys = list(dataSet.keys())
+	for dateKey in dateKeys:
+		if dateKey in thirtyDayList:
+			currentPrice = dataSet[dateKey]		
+			currentPriceDict = {dateKey: currentPrice}
+			analysisDict.update(currentPriceDict)
+	
+	dataAvgPrice = listAvgFunc(analysisDict)
+	dataMinPrice = listMinFunc(analysisDict)
+	dataMaxPrice = listMaxFunc(analysisDict)
+	dataStdDev = stdDevFunc2(analysisDict)
+	listAnalysis = {'stdDev': dataStdDev, 'avg': dataAvgPrice, 'max': dataMaxPrice, 'min': dataMinPrice}
+
+	outputDict = {centerDate: listAnalysis}
+
+	return outputDict
 
 
 
 
+def thirtyDayFunc(ogDt):
+	thirtyDayList = []
 
-# function to find percent change from 52Week low, high, and avg
-def pChangeStatsFunc(analysisDict):
-	#print(analysisDict)
-	currentPair = analysisDict['pair']
-	currentAvg = ro6(analysisDict['avg'])
-	currentLowDate = list(analysisDict['min'].keys())[0]
-	currentLow = ro6(analysisDict['min'][currentLowDate])
-	currentHighDate = list(analysisDict['max'].keys())[0]
-	currentHigh = ro6(analysisDict['max'][currentHighDate])
-	currentData = analysisDict['data']
-	#print("\n" + str(currentPair) + "52W Avg: $" + str(currentAvg))
-	#print("52 Week High: " + str(currentHigh) + " on: " + str(currentHighDate))
-	#print("52 Week Low: " + str(currentLow) + " on: " + str(currentLowDate) + "\n")
-	currentDateList = list(currentData.keys())
-	maxPchangeDict, minPchangeDict, avgPchangeDict = {}, {}, {}
-	for date in currentDateList:
-		datePrice = currentData[date]
-		maxPchange = ro6(percentChange(currentHigh, datePrice))
-		minPchange = ro6(percentChange(currentLow, datePrice))
-		avgPchange = ro6(percentChange(currentAvg, datePrice))
-		#print("Price: " + str(ro6(datePrice)) + " on: " + str(date))
-		#print("pChange max: " + str(maxPchange) + "% pChange min: " + str(minPchange) + "% pChange Avg: " + str(avgPchange) + "%\n")
-		maxPchangeDict.update({date: maxPchange})
-		minPchangeDict.update({date: minPchange})
-		avgPchangeDict.update({date: avgPchange})
-
-		#pChangeDict = {'maxPchange': maxPchange, "minPchange": minPchange, 'avgPchange': avgPchange}
-	analysisDict.update({'maxP': maxPchangeDict})
-	analysisDict.update({'minP': minPchangeDict})
-	analysisDict.update({'avgP': avgPchangeDict})
+	thirtyDayList.append(ogDt)
 
 
-		#print(currentData)
-	return analysisDict
+	for dayCounter in range(15):
+		dayCounter = dayCounter+1
+		dtDt = dateparser.parse(ogDt)
+		addDaysFull = dtDt + datetime.timedelta(days = dayCounter)
+
+		subtractDaysFull = dtDt - datetime.timedelta(days = dayCounter)
+
+		addDaysSplit = str(addDaysFull).split(" ")
+		subtractDaysSplit = str(subtractDaysFull).split(" ")
+		addDays = addDaysSplit[0]
+		subtractDays = subtractDaysSplit[0]
+		thirtyDayList.append(addDays)
+		thirtyDayList.append(subtractDays)
+	thirtyDayList.sort(reverse=False)
+
+	return thirtyDayList
+
+
+def dataFor30Func(dataSet, centerDate):
+	thirtyDayList = thirtyDayFunc(centerDate)
+	dict30Days = {}
+	dateKeys = list(dataSet.keys())
+	for dateKey in dateKeys:
+		if dateKey in thirtyDayList:
+			currentPrice = dataSet[dateKey]		
+			currentPriceDict = {dateKey: currentPrice}
+			dict30Days.update(currentPriceDict)
+	return dict30Days
+
+
+
+def movingAvgFunc(dataSet, centerDate):
+	thirtyDayList = thirtyDayFunc(centerDate)
+	analysisDict = {}
+	dateKeys = list(dataSet.keys())
+	for dateKey in dateKeys:
+		if dateKey in thirtyDayList:
+			currentPrice = dataSet[dateKey]		
+			currentPriceDict = {dateKey: currentPrice}
+			analysisDict.update(currentPriceDict)
+	
+	dataAvgPrice = listAvgFunc(analysisDict)
+	movingAvgDict = {centerDate: dataAvgPrice}
+
+	return movingAvgDict
+
+
+def createMovingAvgDict(tokenPair):
+	tokenData = geckoData[tokenPair]['data']
+
+	movingAvgDict = {}
+	for date in tokenData:
+		movingAvg30 = movingAvgFunc(tokenData, date)
+
+		movingAvgDict.update(movingAvg30)
+
+
+	return movingAvgDict
+
 
 for geckoKey in geckoKeys:
-	currentTokenDict = geckoData[geckoKey]
-	pChangeStatTest = pChangeStatsFunc(currentTokenDict)
+	currentMovingAvg30Dict = createMovingAvgDict(geckoKey)
+	currentGeckoData = geckoData[geckoKey]
+	currentGeckoData['movingAvg30'] = currentMovingAvg30Dict
+#print(adaMovingAvg30Dict)
+
+#print(geckoData['AdaUsd'])
+
+"""for date in adaData:
+	movingAvg30 = movingAvgFunc(adaData, date)
+
+	print("\n")
+	print(movingAvg30)
+"""
 
 
+time = datetime.now()
+dtRn = str(strftime("%x") + " " + strftime("%X"))
+justTime, justDate = strftime("%X"), strftime("%x")
+print("\nCompleted sort on: " + str(justDate) + " at: " + str(justTime) + "\n")
 
 
 
@@ -182,63 +241,4 @@ except Exception as e: print(e)
 
 
 
-"""
-# function for sorting key
-def sortByPair(theDict):
-	return theDict['pair']
 
-
-# function to describe analysis data
-def describeAnalysisFunc(analysisDicts):
-	for analysisDict in analysisDicts:
-		currentPair = analysisDict['pair']
-		currentAvg = analysisDict['avg']
-		currentLowDate = list(analysisDict['min'].keys())[0]
-		currentLow = analysisDict['min'][currentLowDate]
-		currentHighDate = list(analysisDict['max'].keys())[0]
-		currentHigh = analysisDict['max'][currentHighDate]
-		print("\n"+ str(currentPair))
-		print("52 Week Avg: " + str(currentAvg))
-		print("52 Week High: " + str(currentHigh) + " on: " + str(currentHighDate))
-		print("52 Week Low: " + str(currentLow) + " on: " + str(currentLowDate))
-
-
-analyzeAll = analyzeAllTokens(geckoData)
-
-analyzeAll.sort(key=sortByPair)
-
-def analysisFunc2(analysisDicts):
-	for analysisDict in analysisDicts:
-
-		currentPair = analysisDict['pair']
-		currentAvg = analysisDict['avg']
-		currentLowDate = list(analysisDict['min'].keys())[0]
-		currentLow = analysisDict['min'][currentLowDate]
-		currentHighDate = list(analysisDict['max'].keys())[0]
-		currentHigh = analysisDict['max'][currentHighDate]
-		geckoDataEur = geckoData['eur']
-		geckoDataUsd = geckoData['usd']
-
-		print("\n\n"+ str(currentPair))
-		print("52 Week Avg: " + str(currentAvg))
-		print("52 Week High: " + str(currentHigh) + " on: " + str(currentHighDate))
-		print("52 Week Low: " + str(currentLow) + " on: " + str(currentLowDate))
-
-
-		if 'usd' in currentPair.lower():
-			currentGeckoData = geckoDataUsd[currentPair]['data']
-		if 'eur' in currentPair.lower():
-			currentGeckoData = geckoDataEur[currentPair]['data']
-
-		geckoKeys = list(currentGeckoData.keys())
-		for key in geckoKeys:
-			print(str(key) + " " + str(currentGeckoData[key]))
-
-analysis2 = analysisFunc2(analyzeAll)
-
-print(analysis2)
-
-#describeAnalysis = describeAnalysisFunc(analyzeAll)#
-
-
-"""
