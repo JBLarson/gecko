@@ -1,0 +1,124 @@
+#!/usr/bin/python3
+
+import time
+import datetime
+import json
+import dateparser
+from geckoFuncz import unixToDatetime, datetimeToUnix
+
+
+# import symbolName data
+symbolNamesInAddr = 'data/symbolNames.json'
+
+with open(symbolNamesInAddr, 'r') as r:
+	symbolNameDict = json.load(r)
+
+
+def sevenDaysAgoFunc(ogDt):
+	dtDt = dateparser.parse(ogDt)
+	startDateFull = dtDt - datetime.timedelta(days = 7)
+	startDateSplit = str(startDateFull).split(" ")
+	startDate = startDateSplit[0]
+	return startDateFull
+
+
+
+
+def oneYearAgo(ogDT):
+	splitDT = ogDT.split("-")
+	year = splitDT[0]
+	
+	restOfDt = str(splitDT[1]) +"-" + str(splitDT[2])
+	yearMinusOne = int(year) - 1
+	oneYearResult = str(yearMinusOne) + "-" + str(restOfDt)
+	
+	return oneYearResult
+
+
+today = datetime.datetime.now()
+today = str(today).split(".")
+today = today[0]
+oneYearAgo = oneYearAgo(today)
+sevenDaysAgo = sevenDaysAgoFunc(today)
+
+epochToday = datetimeToUnix(today)
+epochOneYearAgo = datetimeToUnix(oneYearAgo)
+epochSevenDaysAgo = datetimeToUnix(str(sevenDaysAgo))
+
+
+def getCoinDict(coin, baseCurrency, fromTimeStamp, toTimestamp):
+	from pycoingecko import CoinGeckoAPI
+	cg = CoinGeckoAPI()
+
+	coinApiRez = cg.get_coin_market_chart_range_by_id(id=coin, vs_currency=baseCurrency, from_timestamp=fromTimeStamp, to_timestamp=toTimestamp) # coin gecko coinApiRez
+	coinRezPrices = coinApiRez['prices']
+	coinRezVolumes = coinApiRez['total_volumes']
+
+	volumeDict, priceDict = {}, {}
+	for price in coinRezPrices:
+		priceIndex = coinRezPrices.index(price)
+		unixTime = price[0]
+		volume = coinRezVolumes[priceIndex][1]
+		unixTime = int(str(unixTime)[:-3])
+		price = price[1]
+		localDT = unixToDatetime(unixTime)
+
+		priceDict.update({localDT: price})
+		volumeDict.update({localDT: volume})
+
+	returnDict = {"base": baseCurrency, "quote": coin, "data": priceDict, "volumeData": volumeDict}
+
+	return returnDict
+
+
+
+def fetchYearTokenData(tokenName):
+	#tokenName = symbolNameFunc(tokenSymbol)
+	tokenName = tokenName.lower()
+	tokenUsd, tokenEur = getCoinDict(tokenName, 'usd', epochOneYearAgo, epochToday), getCoinDict(tokenName, 'eur', epochOneYearAgo, epochToday)
+	tokenUsdEur = [tokenUsd, tokenEur]
+	return tokenUsdEur
+
+
+def fetchWeekTokenData(tokenName):
+	#tokenName = symbolNameFunc(tokenSymbol)
+	tokenName = tokenName.lower()
+	tokenUsd, tokenEur = getCoinDict(tokenName, 'usd', epochSevenDaysAgo, epochToday), getCoinDict(tokenName, 'eur', epochSevenDaysAgo, epochToday)
+	tokenUsdEur = [tokenUsd, tokenEur]
+	return tokenUsdEur
+
+fetchTest = fetchWeekTokenData('cardano')
+print(fetchTest)
+
+"""
+
+def getAllTokens(symbolNameDict):
+	tokenDataDict = {}
+	symbols = list(symbolNameDict.keys())
+
+	for symbol in symbols:
+		print("Fetching data for: " + str(symbol))
+		symbolName = symbolNameDict[symbol]
+		symbolDataList = fetchWeekTokenData(symbolName)
+		for symbolData in symbolDataList:	
+			symbolBase = symbolData['base']
+			pair = str(symbol).capitalize() + str(symbolBase).capitalize()
+			tokenDataDict.update({pair: symbolData})
+
+	return tokenDataDict
+
+allTokens = getAllTokens(symbolNameDict)
+
+
+
+jsonOutAddr = 'data/OGgeckoWeek' + '.json'
+try:
+	with open(jsonOutAddr, 'w') as fp1: json.dump(allTokens, fp1)
+
+
+	print("\nSuccess Creating Crypto Json on/at: " + str(jsonOutAddr) + "\n")
+
+except Exception as e:
+	print(e)
+
+"""
