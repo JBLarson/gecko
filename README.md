@@ -6,5 +6,5 @@
 2. Launch virtual environment
 >> source geckoEnv/bin/activate
 2. Run [main.sh](main.sh)
-3. Experiment with historical data using [analyze.py](analyze.py) and [viewData.py](viewData.py)
-4. Visualize data with matplotlib using [plot.py](plot.py)
+3. Run [analyze.py](analyze.py) then run [movingAvgs.py](movingAvgs.py) (be patient, these programs are not fast).
+4. Visualize price, volume, 30-day, 50-day, and 200-day moving averages with matplotlib using [plot.py](plot.py)
