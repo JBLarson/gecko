@@ -5,7 +5,6 @@ import sys
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-
 import time
 import datetime
 import dateparser
@@ -74,21 +73,20 @@ def plotTokenFunc(tokenSymbol, startDateIndex, endDateIndex):
 
 
 def getDouble(self):
-    d, okPressed = QInputDialog.getDouble(self,"Date Range","Value:", 30, 0, 100, 1)
+    d, okPressed = QInputDialog.getDouble(self,"Date Range","Value:", 180, 0, 365, 0)
     if okPressed:
         global sdi
         sdi = int(-d)
-        print("Date range(#): " + str(d))
-
+    return sdi
 #sdi, edi = -90, -1
 edi = -1
 
 def window():
 	app = QApplication(sys.argv)
 	win = QDialog()
+	currentSdi = getDouble(win)
 
-	getDouble(win)
-
+	# buttons for pairs
 	p1 = QPushButton(win)
 	p1.setText("Plot BtcUsd")
 	p1.move(20,20)
@@ -149,16 +147,34 @@ def window():
 	p12.move(260,140)
 	p12.clicked.connect(plotDaiEur)
 	
+	p13 = QPushButton(win)
+	p13.setText("Close Chart ")
+	p13.move(200,240)
+	p13.clicked.connect(closeFig)
+	
+	p14 = QPushButton(win)
+	p14.setText("Quit GUI ")
+	p14.move(100,240)
+	p14.clicked.connect(quitPlot)
 
 
-	win.setGeometry(800,100,400,200)
+	win.setGeometry(800,100,400,300)
 
-	win.setWindowTitle("Plot - Gecko")
+	win.setWindowTitle(str(abs(currentSdi)) + "-day Plot - Gecko")
 	win.show()
 	sys.exit(app.exec_())
 
 
+# button function
+# control functions
+def quitPlot():
+	sys.exit()
 
+def closeFig():
+	plt.close()
+
+
+# functions for pairs
 def plotBtcUsd():
 	pltBtcUsd = plotTokenFunc('BtcUsd', sdi, edi)
 
