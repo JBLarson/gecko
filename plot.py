@@ -5,6 +5,7 @@ import sys
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
+
 import time
 import datetime
 import dateparser
@@ -22,51 +23,9 @@ with open(jsonInAddr, 'r') as f:
 	geckoData = json.load(f)
 
 
-def plotTokenFuncOG(tokenSymbol):
-	tokenPair = geckoData[tokenSymbol]
-	tokenPairMovingAvg30 = tokenPair['movingAvg30']
-	tokenPairMovingAvg50 = tokenPair['movingAvg50']
-	tokenPairMovingAvg200 = tokenPair['movingAvg200']
-
-	tokenPairPrices = tokenPair['data']
-	tokenPairStdDev = tokenPair['stdDev']
-	tokenPairVolume = tokenPair['volumeData']
-
-	movingAvgKeys = list(tokenPairMovingAvg30.keys())
 
 
-	smaDates, sma30Prices, sma50Prices, sma200Prices, prices, volumes = [], [], [], [], [], []
-
-	for key in movingAvgKeys:
-		smaDates.append(key)
-		sma30Prices.append(tokenPairMovingAvg30[key])
-		sma50Prices.append(tokenPairMovingAvg50[key])
-		sma200Prices.append(tokenPairMovingAvg200[key])
-
-		prices.append(tokenPairPrices[key])
-		volumes.append(tokenPairVolume[key])
-
-
-	plt.subplot(211)
-	#plt.plot(smaDates, sma30Prices)
-	plt.plot(smaDates, sma50Prices)
-	plt.plot(smaDates, sma200Prices)
-
-	plt.ylabel('Price')
-
-	plt.plot(smaDates, prices)
-	priceTitle = tokenSymbol + " Prices and SMA"
-	plt.title(priceTitle)
-	plt.subplot(212)
-	plt.plot(smaDates, volumes)
-	volumeTitle = tokenSymbol + " Volume"
-	plt.title(volumeTitle)
-
-
-	plt.show()
-
-
-def plotTokenFunc(tokenSymbol):
+def plotTokenFunc(tokenSymbol, startDateIndex, endDateIndex):
 	tokenPair = geckoData[tokenSymbol]
 	tokenPairMovingAvg7 = tokenPair['movingAvg7']
 	tokenPairMovingAvg30 = tokenPair['movingAvg30']
@@ -82,7 +41,7 @@ def plotTokenFunc(tokenSymbol):
 
 	smaDates, sma7Prices, sma30Prices, sma50Prices, sma200Prices, prices, volumes = [], [], [], [], [], [], []
 
-	for key in movingAvgKeys:
+	for key in movingAvgKeys[startDateIndex:]:
 		smaDates.append(key)
 		sma7Prices.append(tokenPairMovingAvg7[key])
 		sma30Prices.append(tokenPairMovingAvg30[key])
@@ -93,6 +52,10 @@ def plotTokenFunc(tokenSymbol):
 		volumes.append(tokenPairVolume[key])
 
 
+	#plt.subplot(211)
+
+
+
 	plt.plot(smaDates, prices, label="Price")
 	plt.plot(smaDates, sma7Prices, label="7-Day SMA")
 
@@ -100,7 +63,7 @@ def plotTokenFunc(tokenSymbol):
 	plt.plot(smaDates, sma30Prices, label="30-Day SMA")
 	plt.plot(smaDates, sma50Prices, label="50-Day SMA")
 
-	#plt.plot(smaDates, sma200Prices, label="200-Day SMA")
+	plt.plot(smaDates, sma200Prices, label="200-Day SMA")
 
 	plt.ylabel('Price')
 
@@ -109,9 +72,23 @@ def plotTokenFunc(tokenSymbol):
 	plt.legend()
 	plt.show()
 
+
+def getDouble(self):
+    d, okPressed = QInputDialog.getDouble(self,"Date Range","Value:", 30, 0, 100, 1)
+    if okPressed:
+        global sdi
+        sdi = int(-d)
+        print("Date range(#): " + str(d))
+
+#sdi, edi = -90, -1
+edi = -1
+
 def window():
 	app = QApplication(sys.argv)
 	win = QDialog()
+
+	getDouble(win)
+
 	p1 = QPushButton(win)
 	p1.setText("Plot BtcUsd")
 	p1.move(20,20)
@@ -182,43 +159,46 @@ def window():
 
 
 
-
 def plotBtcUsd():
-	pltBtcUsd = plotTokenFunc('BtcUsd')
+	pltBtcUsd = plotTokenFunc('BtcUsd', sdi, edi)
 
 def plotBtcEur():
-	pltBtcEur = plotTokenFunc('BtcEur')
+	pltBtcEur = plotTokenFunc('BtcEur', sdi, edi)
 
 def plotEthUsd():
-	pltEthUsd = plotTokenFunc('EthUsd')
+	pltEthUsd = plotTokenFunc('EthUsd', sdi, edi)
 
 def plotEthEur():
-	pltEthEur = plotTokenFunc('EthEur')
+	pltEthEur = plotTokenFunc('EthEur', sdi, edi)
+
 
 def plotDaiUsd():
-	pltDaiUsd = plotTokenFunc('DaiUsd')
+	pltDaiUsd = plotTokenFunc('DaiUsd', sdi, edi)
 
 def plotDaiEur():
-	pltDaiEur = plotTokenFunc('DaiEur')
+	pltDaiEur = plotTokenFunc('DaiEur', sdi, edi)
+
 
 def plotAdaUsd():
-	pltAdaUsd = plotTokenFunc('AdaUsd')
+	pltAdaUsd = plotTokenFunc('AdaUsd', sdi, edi)
 
 def plotAdaEur():
-	pltAdaEur = plotTokenFunc('AdaEur')
+	pltAdaEur = plotTokenFunc('AdaEur', sdi, edi)
 
 def plotLinkUsd():
-	pltLinkUsd = plotTokenFunc('LinkUsd')
+	pltLinkUsd = plotTokenFunc('LinkUsd', sdi, edi)
 
 def plotLinkEur():
-	pltLinkEur = plotTokenFunc('LinkEur')
+	pltLinkEur = plotTokenFunc('LinkEur', sdi, edi)
+
 
 def plotXmrUsd():
-	pltXmrUsd = plotTokenFunc('XmrUsd')
+	pltXmrUsd = plotTokenFunc('XmrUsd', sdi, edi)
 
 def plotXmrEur():
-	pltXmrEur = plotTokenFunc('XmrEur')
+	pltXmrEur = plotTokenFunc('XmrEur', sdi, edi)
 
 
 if __name__ == '__main__':
 	window()
+
