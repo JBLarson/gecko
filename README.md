@@ -6,7 +6,6 @@
 2. Launch virtual environment
 >> source geckoEnv/bin/activate
 2. Run [main.sh](main.sh)
-3. Experiment with historical data using [analyze.py](analyze.py) and [viewData.py](viewData.py)
-4. Run [movingAvgs.py](movingAvgs.py) and [movingAvg7.py](movingAvg7.py)
-5. Visualize data with matplotlib using [plot.py](plot.py)
+    * Executes [sampleStats.py](sampleStats.py) && [sma.py](sma.py)
+3. Visualize data with a PyQt5 GUI using matplotlib with [plot.py](plot.py)
 ![Plot.py Screenshot](/images/plotScreenshot.png) 
