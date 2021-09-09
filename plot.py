@@ -5,7 +5,6 @@ import sys
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-
 import time
 import datetime
 import dateparser
@@ -18,7 +17,7 @@ ro1, ro2, ro6, ro8 = lambda x : round(x, 1), lambda x : round(x, 2), lambda x : 
 
 
 # import coinGecko data
-jsonInAddr = 'data/geckoAnalysis3.json'
+jsonInAddr = 'data/geckoAnalysis2.json'
 with open(jsonInAddr, 'r') as f:
 	geckoData = json.load(f)
 
