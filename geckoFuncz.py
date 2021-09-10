@@ -11,13 +11,17 @@ def unixToDatetime(epochTime):
 	return localTime
 
 
-
 def datetimeToUnix(ogDatetime):
-	ogDatetime=datetime.datetime.strptime(ogDatetime, "%Y-%m-%d %H:%M:%S")
+	try:	
+		try:
+			ogDatetime=datetime.datetime.strptime(ogDatetime, "%Y-%m-%d %H:%M:%S")
+		except:
+			ogDatetime=datetime.datetime.strptime(ogDatetime, "%Y-%m-%d")
+	except Exception as e:
+		print(e)
 	epochTime = ogDatetime.strftime('%s')
 
 	return epochTime
-
 
 
 
