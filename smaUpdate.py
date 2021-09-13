@@ -6,7 +6,7 @@ import dateparser
 from datetime import datetime, timedelta, date
 from time import strftime
 import numpy as np
-from geckoFuncz import nDayFunc, listAvgFunc, upToDateFunc
+from geckoFuncz import nDayFunc, listAvgFunc, upToDateFunc, createJsonFunc
 
 
 # lambda functions for rounding
@@ -22,7 +22,7 @@ print("\nStarted SMA Script on: " + str(justDate) + " at: " + str(justTime) + "\
 
 
 # import existing gecko data w/ SMA
-existingSMAjsonInAddr = 'data/gAnalysis2.json'
+existingSMAjsonInAddr = 'data/geckoAnalysis2.json'
 
 with open(existingSMAjsonInAddr, 'r') as f:
 	geckoData = json.load(f)
@@ -30,7 +30,7 @@ with open(existingSMAjsonInAddr, 'r') as f:
 
 
 # import updated gecko price data
-priceUpdatejsonInAddr = 'data/geckoAnalysisTest.json'
+priceUpdatejsonInAddr = 'data/geckoAnalysis.json'
 
 with open(priceUpdatejsonInAddr, 'r') as f:
 	updatedGeckoData = json.load(f)
@@ -74,12 +74,12 @@ def dictDateFunc(targetDict, dictKey):
 # functions for updating SMA
 
 
-def updateMovingAvgDict(tokenPair, n):
+def updateMovingAvgDict(tokenPair):
 	tokenDict = geckoData[tokenPair]
 	updatedPriceTokenDict = updatedGeckoData[tokenPair]
 
-	print("Existing SMA Dictionary keys: " + str(tokenDict.keys()))
-	print("updated price Dictionary keys: " + str(updatedPriceTokenDict.keys()))
+	#print("Existing SMA Dictionary keys: " + str(tokenDict.keys()))
+	#print("updated price Dictionary keys: " + str(updatedPriceTokenDict.keys()))
 
 	tokenData = tokenDict['data']
 	updateTokenData = updatedPriceTokenDict['data']
@@ -115,103 +115,32 @@ def updateMovingAvgDict(tokenPair, n):
 				currentMovingAvgUpdates.append(movingAvgUpdate)
 		#print(currentMovingAvgUpdates)
 		allMovingAvgUpdates.update({movingAvgLength: currentMovingAvgUpdates})
+
 	return allMovingAvgUpdates
 
 
-#tokenSMA7dates = dictDatesFunc(tokenDict, '')
 
-"""
-currentMovingAvgKey = 'movingAvg' + str(n)
-currentMovingAvgDict = tokenDict[currentMovingAvgKey]
-
-print(currentMovingAvgDict)
-print("\nPrice data: ")
-print(tokenData)
-"""
-"""
-movingAvgDict = {}
-for date in tokenData:
-	movingAvgN = movingAvgFunc(tokenData, date, n)
-
-	movingAvgDict.update(movingAvgN)
+for geckoKey in geckoKeys:
 
 
-return movingAvgDict
-"""
-
-
-updateMovingAvgTest = updateMovingAvgDict('AdaUsd', 30)
-print("\nSMA update Data")
-print(updateMovingAvgTest)
+	currentExistingData = geckoData[geckoKey]
+	updatedMovingAvgs = updateMovingAvgDict(geckoKey)
 
 
 
 
+	smaUpdateKeys = list(updatedMovingAvgs.keys())
+	for updateKey in smaUpdateKeys:
 
-"""
+		smaDictKey = 'movingAvg' + str(updateKey)
+		print(smaDictKey)
 
-
-upToDateResult = upToDateFunc(geckoData)
-
-print(upToDateResult)
-
-
-print("\nOG update code:\n")
-
-for geckoKey in geckoKeys[0:1]:
-	# dictionary for current token
-	currentGeckoData = geckoData[geckoKey]
+		currentUpdate = updatedMovingAvgs[updateKey]
+		print("\nUpdate to " + str(updateKey) + "-day SMA" + str(currentUpdate))
+		for updateDict in currentUpdate:
+			currentExistingData[smaDictKey].update(updateDict)
 
 
-
-	# calculate SMA
-	currentMovingAvg7Dict = createMovingAvgDict(geckoKey, 7)
-	#currentMovingAvg14Dict = createMovingAvgDict(geckoKey, 14)
-	#currentMovingAvg30Dict = createMovingAvgDict(geckoKey, 30)
-	#currentMovingAvg50Dict = createMovingAvgDict(geckoKey, 50)
-	#currentMovingAvg200Dict = createMovingAvgDict(geckoKey, 200)
-	
-	# add SMA's to dictionary
-	currentGeckoData['movingAvg7'] = currentMovingAvg7Dict
-
-	print("Added 7-day SMA for: " + str(currentGeckoData['pair']))
-	
-	currentGeckoData['movingAvg14'] = currentMovingAvg14Dict
-
-	print("Added 14-day SMA for: " + str(currentGeckoData['pair']))
-
-	currentGeckoData['movingAvg30'] = currentMovingAvg30Dict
-
-	print("Added 30-day SMA for: " + str(currentGeckoData['pair']))
-
-	currentGeckoData['movingAvg50'] = currentMovingAvg50Dict
-
-	print("Added 50-day SMA for: " + str(currentGeckoData['pair']))
-
-	currentGeckoData['movingAvg200'] = currentMovingAvg200Dict
-
-	print("Added 200-day SMA for: " + str(currentGeckoData['pair']))
-	
-
-time = datetime.now()
-dtRn = str(strftime("%x") + " " + strftime("%X"))
-justTime, justDate = strftime("%X"), strftime("%x")
-print("\nCompleted SMA script on: " + str(justDate) + " at: " + str(justTime) + "\n")
+updateJson = createJsonFunc('data/geckoAnalysis2.json', geckoData)
 
 
-
-
-
-
-jsonOutAddr = 'data/geckoAnalysis2.json'
-
-jsonOutAddr = 'data/geckoAnalysis2Test.json'
-try:
-	with open(jsonOutAddr, 'w') as fp1: json.dump(geckoData, fp1)
-
-	print("\nSuccess Processing SMA's - JSON output file at: " + str(jsonOutAddr) + '\n')
-
-
-except Exception as e: print(e)
-
-"""
