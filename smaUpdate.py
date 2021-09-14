@@ -30,7 +30,7 @@ with open(existingSMAjsonInAddr, 'r') as f:
 
 
 # import updated gecko price data
-priceUpdatejsonInAddr = 'data/geckoAnalysis.json'
+priceUpdatejsonInAddr = 'data/geckoUpdate.json'
 
 with open(priceUpdatejsonInAddr, 'r') as f:
 	updatedGeckoData = json.load(f)
@@ -40,6 +40,29 @@ with open(priceUpdatejsonInAddr, 'r') as f:
 
 geckoKeys = list(geckoData.keys())
 
+
+# update price data
+for geckoKey in geckoKeys:
+	currentExistingData = geckoData[geckoKey]
+	currentUpdateData = updatedGeckoData[geckoKey]
+	existingPriceData = currentExistingData['data']
+	updatePriceData = currentUpdateData['data']
+	updateKeys, existingKeys = list(updatePriceData.keys()), list(existingPriceData.keys())
+	for updateKey in updateKeys:
+		if updateKey not in existingKeys:
+			existingPriceData.update({updateKey: updatePriceData[updateKey]})
+	
+
+# update Volume data
+for geckoKey in geckoKeys:
+	currentExistingData = geckoData[geckoKey]
+	currentUpdateData = updatedGeckoData[geckoKey]
+	existingVolumeData = currentExistingData['volumeData']
+	updateVolumeData = currentUpdateData['volumeData']
+	updateKeys, existingKeys = list(updateVolumeData.keys()), list(existingVolumeData.keys())
+	for updateKey in updateKeys:
+		if updateKey not in existingKeys:
+			existingVolumeData.update({updateKey: updateVolumeData[updateKey]})
 
 
 
@@ -85,13 +108,9 @@ def updateMovingAvgDict(tokenPair):
 	updateTokenData = updatedPriceTokenDict['data']
 	existingPriceDates = dictDateFunc(tokenDict, 'data')
 	lastPriceDate = existingPriceDates[-1]
-	print("\nExisting data w / SMA")
-	print("Last price: " + str(lastPriceDate))
 
-	print("\nUpdated data")
 	updatedPriceDates = dictDateFunc(updatedPriceTokenDict, 'data')
 	lastUpdatedPriceDate = updatedPriceDates[-1]
-	print("Last price: " + str(lastUpdatedPriceDate))
 
 	# need to make function to iterate through moving avgs
 
@@ -119,7 +138,7 @@ def updateMovingAvgDict(tokenPair):
 	return allMovingAvgUpdates
 
 
-
+# update SMA data
 for geckoKey in geckoKeys:
 
 
@@ -133,14 +152,17 @@ for geckoKey in geckoKeys:
 	for updateKey in smaUpdateKeys:
 
 		smaDictKey = 'movingAvg' + str(updateKey)
-		print(smaDictKey)
 
 		currentUpdate = updatedMovingAvgs[updateKey]
-		print("\nUpdate to " + str(updateKey) + "-day SMA" + str(currentUpdate))
 		for updateDict in currentUpdate:
 			currentExistingData[smaDictKey].update(updateDict)
 
 
 updateJson = createJsonFunc('data/geckoAnalysis2.json', geckoData)
 
+
+time = datetime.now()
+dtRn = str(strftime("%x") + " " + strftime("%X"))
+justTime, justDate = strftime("%X"), strftime("%x")
+print("\nCompleted SMA Update on: " + str(justDate) + " at: " + str(justTime) + "\n")
 
