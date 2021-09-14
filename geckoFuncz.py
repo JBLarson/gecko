@@ -132,9 +132,11 @@ def analyzeTokenFunc(targetDict):
 	return listAnalysis
 
 
-# use upToDateFunc to determine if SMA's need to be created or updated
 
-def upToDateFunc(geckoData):
+# use smaUpToDateFunc to determine if SMA's need to be created or updated
+# previously called upToDateFunc
+
+def smaUpToDateFunc(geckoData):
 	# datetime variables
 	todayOG = datetime.now()
 	todaySplit = str(todayOG).split(" ")
@@ -159,6 +161,38 @@ def upToDateFunc(geckoData):
 
 
 	return upToDateOutput
+
+
+
+
+# use upToDateFunc to determine if price's need to be updated
+
+def upToDateFunc(geckoData):
+	# datetime variables
+	todayOG = datetime.now()
+	todaySplit = str(todayOG).split(" ")
+	today = todaySplit[0]
+
+	latestDateList = []
+
+	geckoKeys = list(geckoData.keys())
+	for key in geckoKeys:
+		currentGeckoData = geckoData[key]
+		priceData = currentGeckoData['data']
+		priceDates = list(priceData.keys())
+		priceDates.sort(reverse=False)
+		latestPriceDate = priceDates[-1]
+		latestDateList.append(latestPriceDate)
+
+	for date in latestDateList:
+		if date == today:
+			upToDateOutput = True
+		else:
+			upToDateOutput = False
+
+
+	return upToDateOutput
+
 
 
 # renamed but keeping original for now to avoid errors
