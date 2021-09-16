@@ -3,7 +3,7 @@
 import time
 import datetime
 import json
-from geckoFuncz import unixToDatetime, datetimeToUnix
+from geckoFuncz import unixToDatetime, datetimeToUnix, analyzeAllTokens, stdDevFunc
 
 
 # import symbolName data
@@ -85,13 +85,43 @@ def getAllTokens(symbolNameDict):
 
 	return tokenDataDict
 
-allTokens = getAllTokens(symbolNameDict)
+geckoData = getAllTokens(symbolNameDict)
+
+geckoKeys = list(geckoData.keys())
 
 
 
-jsonOutAddr = 'data/OGgecko' + '.json'
+# create sample stats for each token
+analyzeAll = analyzeAllTokens(geckoData)
+
+for aDict in analyzeAll:
+	aDictPair = aDict['pair']
+	
+	baseKeys = geckoData.keys()
+	for baseKey in baseKeys:
+		currentGeckoDict = geckoData[baseKey]
+		currentGekkoQuote = currentGeckoDict['quote']
+		currentGekkoBase = currentGeckoDict['base']
+		currentGekkoPair = str(currentGekkoQuote).capitalize() + str(currentGekkoBase).capitalize()
+		if aDictPair == currentGekkoPair:
+			currentGeckoDict.update(aDict)
+
+
+
+
+# find stdDeviation for each token
+for geckoKey in geckoKeys:
+	currentGdict = geckoData[geckoKey]
+	stdDev = stdDevFunc(currentGdict)
+	currentGdict.update({'stdDev': stdDev})
+
+
+
+
+
+jsonOutAddr = 'data/geckoAnalysis' + '.json'
 try:
-	with open(jsonOutAddr, 'w') as fp1: json.dump(allTokens, fp1)
+	with open(jsonOutAddr, 'w') as fp1: json.dump(geckoData, fp1)
 
 
 	print("\nSuccess Creating Crypto Json on/at: " + str(jsonOutAddr) + "\n")
