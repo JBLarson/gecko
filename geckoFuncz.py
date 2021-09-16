@@ -1,12 +1,12 @@
 
-import time
-import datetime
+from time import strftime, strptime
+from datetime import datetime
 import json
 import dateparser
 import math
 
 def unixToDatetime(epochTime):
-	localTime = time.strftime('%Y-%m-%d', time.localtime(epochTime))
+	localTime = strftime('%Y-%m-%d', time.localtime(epochTime))
 
 	return localTime
 
@@ -14,54 +14,14 @@ def unixToDatetime(epochTime):
 def datetimeToUnix(ogDatetime):
 	try:	
 		try:
-			ogDatetime=datetime.datetime.strptime(ogDatetime, "%Y-%m-%d %H:%M:%S")
+			ogDatetime= strptime(ogDatetime, "%Y-%m-%d %H:%M:%S")
 		except:
-			ogDatetime=datetime.datetime.strptime(ogDatetime, "%Y-%m-%d")
+			ogDatetime= strptime(ogDatetime, "%Y-%m-%d")
 	except Exception as e:
 		print(e)
 	epochTime = ogDatetime.strftime('%s')
 
 	return epochTime
-
-
-
-def thirtyDayFunc(ogDt):
-	thirtyDayList = []
-
-	thirtyDayList.append(ogDt)
-
-
-	for dayCounter in range(15):
-		dayCounter = dayCounter+1
-		dtDt = dateparser.parse(ogDt)
-		addDaysFull = dtDt + datetime.timedelta(days = dayCounter)
-
-		subtractDaysFull = dtDt - datetime.timedelta(days = dayCounter)
-
-		addDaysSplit = str(addDaysFull).split(" ")
-		subtractDaysSplit = str(subtractDaysFull).split(" ")
-		addDays = addDaysSplit[0]
-		subtractDays = subtractDaysSplit[0]
-		thirtyDayList.append(addDays)
-		thirtyDayList.append(subtractDays)
-	thirtyDayList.sort(reverse=False)
-
-	return thirtyDayList
-
-
-def dataFor30Func(dataSet, centerDate):
-	thirtyDayList = thirtyDayFunc(centerDate)
-	dict30Days = {}
-	dateKeys = list(dataSet.keys())
-	for dateKey in dateKeys:
-		if dateKey in thirtyDayList:
-			currentPrice = dataSet[dateKey]		
-			currentPriceDict = {dateKey: currentPrice}
-			dict30Days.update(currentPriceDict)
-	return dict30Days
-
-
-
 
 
 # function that returns high price in price dict
@@ -257,3 +217,11 @@ def readJsonFunc(jsonInAddr):
 	return jsonOutputDict
 
 
+
+
+def dtCheck(scriptStatus, scriptType):
+	time = datetime.now()
+	dtRn = str(strftime("%x") + " " + strftime("%X"))
+	justTime, justDate = strftime("%X"), strftime("%x")
+	dtCheckOutput = ("\n" + str(scriptStatus) + " " + str(scriptType) + " Script on: " + str(justDate) + " at: " + str(justTime) + "\n")
+	return dtCheckOutput
