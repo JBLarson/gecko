@@ -3,7 +3,7 @@
 import time
 import datetime
 import json
-from geckoFuncz import unixToDatetime, datetimeToUnix, analyzeAllTokens, stdDevFunc
+from geckoFuncz import unixToDatetime, datetimeToUnix, analyzeAllTokens, stdDevFunc, pChangeFunc
 
 
 # import symbolName data
@@ -116,6 +116,12 @@ for geckoKey in geckoKeys:
 	currentGdict.update({'stdDev': stdDev})
 
 
+
+# find daily percentage change for each token
+for geckoKey in geckoKeys:
+	currentTokenDict = geckoData[geckoKey]
+	pChangeDict = pChangeFunc(currentTokenDict)
+	currentTokenDict['pChange'] = pChangeDict
 
 
 
