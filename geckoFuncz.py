@@ -5,6 +5,8 @@ import json
 import dateparser
 import math
 
+
+
 def unixToDatetime(epochTime):
 	localTime = strftime('%Y-%m-%d', time.localtime(epochTime))
 
@@ -22,6 +24,8 @@ def datetimeToUnix(ogDatetime):
 	epochTime = ogDatetime.strftime('%s')
 
 	return epochTime
+
+
 
 
 # function that returns high price in price dict
@@ -65,7 +69,7 @@ def avgFunc(targetDict):
 
 
 
-def stdDevFunc2(currentPriceData):
+def stdDevFunc(currentPriceData):
 	currentAvg = avgFunc(currentPriceData)
 	currentMeanDevSquaredSum = 0
 	for currentDate in currentPriceData:
@@ -90,6 +94,21 @@ def analyzeTokenFunc(targetDict):
 	listAnalysis = {'pair': targetPair, 'avg': listAvgPrice, 'max': listMaxPrice, 'min': listMinPrice}
 
 	return listAnalysis
+
+
+
+# function to run analysis function on all pairs in gecko dictionary
+def analyzeAllTokens(geckoData):
+	analysisList = []
+
+	quoteKeys = list(geckoData.keys())
+
+	for quoteKey in quoteKeys:
+		pairDict = geckoData[quoteKey]
+		analyzePair = analyzeTokenFunc(pairDict)
+		analysisList.append(analyzePair)
+	return analysisList
+
 
 
 
@@ -219,9 +238,35 @@ def readJsonFunc(jsonInAddr):
 
 
 
-def dtCheck(scriptStatus, scriptType):
+def echoDt(scriptStatus, scriptType):
 	time = datetime.now()
 	dtRn = str(strftime("%x") + " " + strftime("%X"))
 	justTime, justDate = strftime("%X"), strftime("%x")
-	dtCheckOutput = ("\n" + str(scriptStatus) + " " + str(scriptType) + " Script on: " + str(justDate) + " at: " + str(justTime) + "\n")
-	return dtCheckOutput
+	echoDtOutput = ("\n" + str(scriptStatus) + " " + str(scriptType) + " Script on: " + str(justDate) + " at: " + str(justTime) + "\n")
+	return echoDtOutput
+
+
+
+def percentChange(fromNum, toNum):
+	pChange = ((toNum - fromNum)/fromNum)*100
+	return pChange
+
+
+
+
+def pChangeFunc(tokenDict):
+	pChangeDict = {}
+	tokenPrices = tokenDict['data']
+	tokenDates = list(tokenPrices.keys())
+	for currentDate in tokenDates:
+		dateIndex = tokenDates.index(currentDate)
+		currentPrice = tokenPrices[currentDate]
+		if dateIndex != 0:
+			lastDate = tokenDates[dateIndex-1]
+			lastPrice = tokenPrices[lastDate]
+			currentPChange = percentChange(lastPrice, currentPrice)
+			pChangeDict.update({currentDate: currentPChange})
+
+	return pChangeDict
+
+
