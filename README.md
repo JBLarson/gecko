@@ -2,8 +2,6 @@
 
 **Analyze Price data for blockchain companies with the CoinGecko API using the PyCoinGecko library**
 
-![Gecko System Flowchart](/images/flowChart.png) 
-
 1. Create environment and install dependencies
     * >> python3 -m venv geckoEnv
     * >> source geckoEnv/bin/activate
