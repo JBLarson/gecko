@@ -6,9 +6,7 @@
     * >> python3 -m venv geckoEnv
     * >> source geckoEnv/bin/activate
     * >> pip install -r req.txt
-3. Launch virtual environment
->> source geckoEnv/bin/activate
-4. Run [main.sh](main.sh)
+2. Run [main.sh](main.sh)
     * Executes [fetchGecko.py](fetchGecko.py) && [sampleStats.py](sampleStats.py) && [sma.py](sma.py)
-5. Visualize data with a PyQt5 GUI using matplotlib with [plot.py](plot.py)
+3. Visualize data with a PyQt5 GUI using matplotlib with [plot.py](plot.py)
 ![Plot.py Screenshot](/images/plotScreenshot.png) 
