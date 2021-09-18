@@ -243,6 +243,7 @@ def echoDt(scriptStatus, scriptType):
 	dtRn = str(strftime("%x") + " " + strftime("%X"))
 	justTime, justDate = strftime("%X"), strftime("%x")
 	echoDtOutput = ("\n" + str(scriptStatus) + " " + str(scriptType) + " Script on: " + str(justDate) + " at: " + str(justTime) + "\n")
+	print(echoDtOutput)
 	return echoDtOutput
 
 
