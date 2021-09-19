@@ -16,7 +16,27 @@ def correlationCoefficient(list1, list2):
 	return corrCoef
 
 
-def corrCoefFunc(tokenPair):
+
+def btcCorrCoefFunc(tokenPair):
+	tokenPrices = list(geckoData[tokenPair]['data'].values())
+	if 'Usd' in tokenPair:	btcPrices = list(geckoData['BtcUsd']['data'].values())
+	if 'Eur' in tokenPair:	btcPrices = list(geckoData['BtcEur']['data'].values())
+	corrCoefOutput = float(correlationCoefficient(btcPrices, tokenPrices)[0,1])
+
+	return corrCoefOutput
+
+
+#for geckoKey in geckoKeys:
+#	btcCorrCoef = btcCorrCoefFunc(geckoKey)
+#	print(geckoKey + " BTC Corr Coef: " + str(btcCorrCoef))
+
+
+
+
+
+
+
+def corrCoefNFunc(tokenPair):
 	tokenPrices = list(geckoData[tokenPair]['data'].values())
 	if 'Usd' in tokenPair:	btcPrices = list(geckoData['BtcUsd']['data'].values())
 	elif 'Eur' in tokenPair:	btcPrices = list(geckoData['BtcEur']['data'].values())
@@ -32,9 +52,22 @@ def corrCoefFunc(tokenPair):
 
 
 
+corrCoefNTest = corrCoefNFunc('AdaUsd')
+print(corrCoefNTest)
+
+
+
 for geckoKey in geckoKeys:
-	corrCoef = corrCoefFunc(geckoKey)
+	corrCoef = corrCoefNFunc(geckoKey)
 	print(geckoKey + " Corr Coefs: " + str(corrCoef))
+
+
+
+
+
+
+
+
 
 
 
