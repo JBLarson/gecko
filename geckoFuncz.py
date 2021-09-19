@@ -4,28 +4,7 @@ from datetime import datetime
 import json
 import dateparser
 import math
-
-
-
-def unixToDatetime(epochTime):
-	localTime = strftime('%Y-%m-%d', time.localtime(epochTime))
-
-	return localTime
-
-
-def datetimeToUnix(ogDatetime):
-	try:	
-		try:
-			ogDatetime= strptime(ogDatetime, "%Y-%m-%d %H:%M:%S")
-		except:
-			ogDatetime= strptime(ogDatetime, "%Y-%m-%d")
-	except Exception as e:
-		print(e)
-	epochTime = ogDatetime.strftime('%s')
-
-	return epochTime
-
-
+from ezDT import *
 
 
 # function that returns high price in price dict
