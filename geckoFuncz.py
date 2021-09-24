@@ -152,21 +152,6 @@ def upToDateFunc(geckoData):
 	return upToDateOutput
 
 
-
-# renamed but keeping original for now to avoid errors
-# function that returns 52W avg price
-def listAvgFunc(targetDict):
-	targetList = list(targetDict.values())
-	sumOfRates = 0
-	for rate in targetList:
-		sumOfRates += rate
-
-	avgRate = sumOfRates / len(targetList)
-	return avgRate
-
-
-
-
 def nDayFunc(ogDt, n):
 	nDayList = []
 	n = n - 1
