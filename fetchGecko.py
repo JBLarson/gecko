@@ -89,8 +89,7 @@ geckoData = getAllTokens(symbolNameDict)
 
 geckoKeys = list(geckoData.keys())
 
-
-
+# find max, min, avg for each token
 # create sample stats for each token
 analyzeAll = analyzeAllTokens(geckoData)
 
@@ -111,9 +110,11 @@ for aDict in analyzeAll:
 
 # find stdDeviation for each token
 for geckoKey in geckoKeys:
-	currentGdict = geckoData[geckoKey]
+	currentGdict = geckoData[geckoKey]['data']
 	stdDev = stdDevFunc(currentGdict)
 	currentGdict.update({'stdDev': stdDev})
+
+
 
 
 
@@ -122,6 +123,7 @@ for geckoKey in geckoKeys:
 	currentTokenDict = geckoData[geckoKey]
 	pChangeDict = pChangeFunc(currentTokenDict)
 	currentTokenDict['pChange'] = pChangeDict
+
 
 
 
