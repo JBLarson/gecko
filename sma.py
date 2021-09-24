@@ -6,6 +6,8 @@ import dateparser
 from datetime import datetime, timedelta, date
 from time import strftime
 import numpy as np
+import ezDT
+
 #lambda functions for rounding
 ro1, ro2, ro6, ro8 = lambda x : round(x, 1), lambda x : round(x, 2), lambda x : round(x, 6), lambda x : round(x, 8)
 
