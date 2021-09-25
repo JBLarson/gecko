@@ -170,7 +170,7 @@ def readJsonFunc(jsonInAddr):
 
 
 def echoDt(scriptStatus, scriptType):
-	time = datetime.now()
+	time = datetime.datetime.now()
 	dtRn = str(strftime("%x") + " " + strftime("%X"))
 	justTime, justDate = strftime("%X"), strftime("%x")
 	echoDtOutput = ("\n" + str(scriptStatus) + " " + str(scriptType) + " Script on: " + str(justDate) + " at: " + str(justTime) + "\n")
