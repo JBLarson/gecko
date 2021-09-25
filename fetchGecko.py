@@ -112,7 +112,8 @@ for aDict in analyzeAll:
 # find stdDeviation for each token
 for geckoKey in geckoKeys:
 	currentGdict = geckoData[geckoKey]
-	stdDev = stdDevFunc(currentGdict)
+	currentPriceDict = currentGdict['data']
+	stdDev = stdDevFunc(currentPriceDict)
 	currentGdict.update({'stdDev': stdDev})
 
 
