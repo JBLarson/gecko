@@ -90,39 +90,6 @@ def analyzeAllTokens(geckoData):
 
 
 
-
-# use smaUpToDateFunc to determine if SMA's need to be created or updated
-# previously called upToDateFunc
-
-def smaUpToDateFunc(geckoData):
-	# datetime variables
-	todayOG = datetime.now()
-	todaySplit = str(todayOG).split(" ")
-	today = todaySplit[0]
-
-	latestDateList = []
-
-	geckoKeys = list(geckoData.keys())
-	for key in geckoKeys:
-		currentGeckoData = geckoData[key]
-		movingAvg7Data = currentGeckoData['movingAvg7']
-		movingAvg7Dates = list(movingAvg7Data.keys())
-		movingAvg7Dates.sort(reverse=False)
-		latestMovingAvg7Date = movingAvg7Dates[-1]
-		latestDateList.append(latestMovingAvg7Date)
-
-	for date in latestDateList:
-		if date == today:
-			upToDateOutput = True
-		else:
-			upToDateOutput = False
-
-
-	return upToDateOutput
-
-
-
-
 # use upToDateFunc to determine if price's need to be updated
 
 def upToDateFunc(geckoData):
