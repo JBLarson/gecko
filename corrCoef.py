@@ -7,6 +7,14 @@ import numpy as np
 echoDtOutput = echoDt('Started', "Correlation Coefficient")
 
 
+
+
+#lambda functions for rounding
+ro1, ro2, ro6, ro8 = lambda x : round(x, 1), lambda x : round(x, 2), lambda x : round(x, 6), lambda x : round(x, 8)
+
+
+
+
 geckoData = readJsonFunc('data/geckoAnalysis2.json')
 geckoKeys = list(geckoData.keys())
 
@@ -52,22 +60,11 @@ def corrCoefNFunc(tokenPair):
 
 
 
-corrCoefNTest = corrCoefNFunc('AdaUsd')
-print(corrCoefNTest)
-
 
 
 for geckoKey in geckoKeys:
 	corrCoef = corrCoefNFunc(geckoKey)
-	print(geckoKey + " Corr Coefs: " + str(corrCoef))
-
-
-
-
-
-
-
-
+	print("Currency Pair: " + geckoKey + " Corr Coefs: " + str(corrCoef))
 
 
 
