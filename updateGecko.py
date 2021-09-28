@@ -153,7 +153,8 @@ if upToDate == False:
 
 	for geckoKey in geckoKeys:
 		currentGdict = geckoData[geckoKey]
-		stdDev = stdDevFunc(currentGdict)
+		currentPriceDict = currentGdict['data']
+		stdDev = stdDevFunc(currentPriceDict)
 		currentGdict.update({'stdDev': stdDev})
 
 
