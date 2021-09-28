@@ -73,9 +73,6 @@ def allCorrCoefFunc(geckoKey):
 
 	corrCoefOutput = {'btc': corrCoefBtc, 'eth': corrCoefEth, 'ada': corrCoefAda, 'link': corrCoefLink, 'dai': corrCoefDai}
 
-	#except Exception as e:
-	#	print("\nException: " + str(e) + "\n")
-
 	return corrCoefOutput
 
 
