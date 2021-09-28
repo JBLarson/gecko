@@ -6,7 +6,7 @@ import dateparser
 from datetime import datetime, timedelta, date
 from time import strftime
 import numpy as np
-from geckoFuncz import nDayFunc, listAvgFunc, upToDateFunc, createJsonFunc
+from geckoFuncz import nDayFunc, avgFunc, upToDateFunc, createJsonFunc
 
 
 # lambda functions for rounding
@@ -76,7 +76,7 @@ def movingAvgFunc(dataSet, centerDate, n):
 			currentPriceDict = {dateKey: currentPrice}
 			analysisDict.update(currentPriceDict)
 	
-	dataAvgPrice = listAvgFunc(analysisDict)
+	dataAvgPrice = avgFunc(analysisDict)
 	movingAvgDict = {centerDate: dataAvgPrice}
 
 	return movingAvgDict
