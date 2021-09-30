@@ -43,9 +43,6 @@ def allMovingCorrCoefFunc(geckoKey, n):
 
 
 
-
-
-
 cc7, cc30, cc200 = {}, {}, {}
 
 for geckoKey in geckoKeys:
@@ -60,8 +57,6 @@ for geckoKey in geckoKeys:
 
 
 coorCoefs = {7: cc7, 30: cc30, 200: cc200}
-
-
 
 
 saveCC = createJsonFunc('data/cc.json', coorCoefs)
