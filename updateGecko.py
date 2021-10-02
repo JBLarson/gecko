@@ -3,8 +3,10 @@ from datetime import datetime
 from time import strftime
 import dateparser
 import json
-from geckoFuncz import unixToDatetime, datetimeToUnix, analyzeTokenFunc, stdDevFunc, upToDateFunc
+from geckoFuncz import *
 import pycoingecko
+from ezDT import *
+
 
 
 try:
@@ -29,47 +31,19 @@ upToDate = upToDateFunc(geckoData)
 
 if upToDate == False:
 
-	time = datetime.now()
-	dtRn = str(strftime("%x") + " " + strftime("%X"))
-	justTime, justDate = strftime("%X"), strftime("%x")
-	print("\nStarted Update on: " + str(justDate) + " at: " + str(justTime) + "\n")
 
-
+	echoDtOutput = echoDt('Started', "Price Update")
 
 
 	# datetime / epoch variables
-	today = datetime.now()
+	today = datetime.datetime.now()
 	today = str(today).split(".")
 	today = today[0]
 	todaySplit = str(today).split(" ")
 	todayYmd = todaySplit[0]
 	unixToday = datetimeToUnix(today)
-
-
-
-	def getCoinDict(coin, baseCurrency, fromTimeStamp, toTimestamp):
-		from pycoingecko import CoinGeckoAPI
-		cg = CoinGeckoAPI()
-
-		coinApiRez = cg.get_coin_market_chart_range_by_id(id=coin, vs_currency=baseCurrency, from_timestamp=fromTimeStamp, to_timestamp=toTimestamp) # coin gecko coinApiRez
-		coinRezPrices = coinApiRez['prices']
-		coinRezVolumes = coinApiRez['total_volumes']
-
-		volumeDict, priceDict = {}, {}
-		for price in coinRezPrices:
-			priceIndex = coinRezPrices.index(price)
-			unixTime = price[0]
-			volume = coinRezVolumes[priceIndex][1]
-			unixTime = int(str(unixTime)[:-3])
-			price = price[1]
-			localDT = unixToDatetime(unixTime)
-
-			priceDict.update({localDT: price})
-			volumeDict.update({localDT: volume})
-
-		returnDict = {"base": baseCurrency, "quote": coin, "data": priceDict, "volumeData": volumeDict}
-
-		return returnDict
+	dateOneYearAgo = subtractDays(today, 365)
+	unixOneYearAgo = datetimeToUnix(str(dateOneYearAgo))
 
 
 
@@ -106,17 +80,9 @@ if upToDate == False:
 		print(updateData)
 
 
-	time = datetime.now()
-	dtRn = str(strftime("%x") + " " + strftime("%X"))
-	justTime, justDate = strftime("%X"), strftime("%x")
-	print("\nCompleted Update on: " + str(justDate) + " at: " + str(justTime) + "\n")
+	echoDtOutput = echoDt('Completed', "Price Update")
 
-
-	time = datetime.now()
-	dtRn = str(strftime("%x") + " " + strftime("%X"))
-	justTime, justDate = strftime("%X"), strftime("%x")
-	print("\nStarted sampleStats on: " + str(justDate) + " at: " + str(justTime) + "\n")
-
+	echoDtOutput = echoDt('Started', "Sample Stats")
 
 
 
@@ -159,10 +125,7 @@ if upToDate == False:
 
 
 
-	time = datetime.now()
-	dtRn = str(strftime("%x") + " " + strftime("%X"))
-	justTime, justDate = strftime("%X"), strftime("%x")
-	print("\nCompleted sample stats on: " + str(justDate) + " at: " + str(justTime) + "\n")
+	echoDtOutput = echoDt('Completed', "Sample Stats")
 
 
 
