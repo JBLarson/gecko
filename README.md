@@ -11,5 +11,3 @@
 3. Visualize data with a PyQt5 GUI using matplotlib with [plot.py](plot.py)
 ![Plot.py Screenshot](/images/plotScreenshot.png) 
 4. Create and analyze correlation coefficient data with [corrCoef.py](corrCoef.py) and [analyzeCC.py](analyzeCC.py)
-
-SQL functionality in progress
