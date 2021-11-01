@@ -53,8 +53,14 @@ def lastYearOfDates(todaysDateTime):
 	return dateList
 
 
+def mdyTodmy(mdyDate):
+	splitDT = mdyDate.split("-")
+	dmyDate = splitDT[2]+"-"+splitDT[1]+"-"+splitDT[0]
+	return dmyDate
 
-lastYearTest = lastYearOfDates(today)
+
+lastYearDateList = lastYearOfDates(today)
+
 
 
 
@@ -68,91 +74,41 @@ def readDict(inputDict):
 def fetchStats(coin, targetDate):
 	coinApiRez = cg.get_coin_history_by_id(id=coin, date=targetDate, localization='false') # coin gecko coinApiRez
 
-	print("\n" + str(coinApiRez['market_data'].keys()))
-	print("\n")
 	communityData = coinApiRez['community_data']
 	devData = coinApiRez['developer_data']
-	readCommunityData = readDict(communityData)
+	#readCommunityData = readDict(communityData)
+	return communityData
 
-
-
-fetchTest = fetchStats('cardano', '29-10-2021')
-
-
-
-
-"""
-def getAllTokens(symbolNameDict):
-	tokenDataDict = {}
-	symbols = list(symbolNameDict.keys())
-
-	for symbol in symbols:
-		symbolName = symbolNameDict[symbol]
-		symbolDataList = fetchTokenData(symbolName)
-		for symbolData in symbolDataList:	
-			symbolBase = symbolData['base']
-			pair = str(symbol).capitalize() + str(symbolBase).capitalize()
-			tokenDataDict.update({pair: symbolData})
-
-	return tokenDataDict
-
-geckoData = getAllTokens(symbolNameDict)
-
-geckoKeys = list(geckoData.keys())
-
-# find max, min, avg for each token
-# create sample stats for each token
-analyzeAll = analyzeAllTokens(geckoData)
-
-for aDict in analyzeAll:
-	aDictPair = aDict['pair']
-	
-	baseKeys = geckoData.keys()
-	for baseKey in baseKeys:
-		currentGeckoDict = geckoData[baseKey]
-		currentGekkoQuote = currentGeckoDict['quote']
-		currentGekkoBase = currentGeckoDict['base']
-		currentGekkoPair = str(currentGekkoQuote).capitalize() + str(currentGekkoBase).capitalize()
-		if aDictPair == currentGekkoPair:
-			currentGeckoDict.update(aDict)
-
-
-
-
-# find stdDeviation for each token
-for geckoKey in geckoKeys:
-	currentGdict = geckoData[geckoKey]
-	currentPriceDict = currentGdict['data']
-	stdDev = stdDevFunc(currentPriceDict)
-	currentGdict.update({'stdDev': stdDev})
-
-
-
-
-
-# find daily percentage change for each token
-for geckoKey in geckoKeys:
-	currentTokenDict = geckoData[geckoKey]
-	pChangeDict = pChangeFunc(currentTokenDict)
-	currentTokenDict['pChange'] = pChangeDict
-
-
-
-
-
-"""
-
-
-
-"""
-jsonOutAddr = 'data/analyzeSocial' + '.json'
 try:
-	with open(jsonOutAddr, 'w') as fp1: json.dump(geckoData, fp1)
+	socialDataDict = {}
+	for targetDate in lastYearDateList[0:100]:
+		targetDateDMY = mdyTodmy(targetDate)
+		print(targetDate)
+		socialData = fetchStats('cardano', targetDateDMY)
+		socialDataDict.update({targetDate: socialData})
 
 
-	print("\nSuccess Creating Crypto Json on/at: " + str(jsonOutAddr) + "\n")
 
-except Exception as e:
-	print(e)
 
-"""
+
+
+	jsonOutAddr = 'data/analyzeSocial' + '.json'
+	try:
+		with open(jsonOutAddr, 'w') as fp1: json.dump(socialDataDict, fp1)
+
+
+		print("\nSuccess Creating Crypto Json on/at: " + str(jsonOutAddr) + "\n")
+
+	except Exception as e:
+		print(e)
+except:
+
+	jsonOutAddr = 'data/analyzeSocial' + '.json'
+	try:
+		with open(jsonOutAddr, 'w') as fp1: json.dump(socialDataDict, fp1)
+
+
+		print("\nSuccess Creating Crypto Json on/at: " + str(jsonOutAddr) + "\n")
+
+	except Exception as e:
+		print(e)	
