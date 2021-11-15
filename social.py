@@ -76,39 +76,39 @@ def fetchStats(coin, targetDate):
 
 	communityData = coinApiRez['community_data']
 	devData = coinApiRez['developer_data']
-	#readCommunityData = readDict(communityData)
-	return communityData
+	coinStats = {'community': communityData, 'dev': devData}
+	return coinStats
 
-try:
-	socialDataDict = {}
-	for targetDate in lastYearDateList[0:100]:
+
+
+
+# need to replace logic with a time.sleep() function
+
+
+socialDataDict, rqCount = {}, 0
+
+for targetDate in lastYearDateList:
+	if rqCount > 45:
+		time.sleep(60)
+		rqCount = 0
+	else:
 		targetDateDMY = mdyTodmy(targetDate)
-		print(targetDate)
+		print("Fetched data for: " + str(targetDate))
 		socialData = fetchStats('cardano', targetDateDMY)
 		socialDataDict.update({targetDate: socialData})
+	
+	rqCount = rqCount + 1
 
 
 
 
 
-
-	jsonOutAddr = 'data/analyzeSocial' + '.json'
-	try:
-		with open(jsonOutAddr, 'w') as fp1: json.dump(socialDataDict, fp1)
-
-
-		print("\nSuccess Creating Crypto Json on/at: " + str(jsonOutAddr) + "\n")
-
-	except Exception as e:
-		print(e)
-except:
-
-	jsonOutAddr = 'data/analyzeSocial' + '.json'
-	try:
-		with open(jsonOutAddr, 'w') as fp1: json.dump(socialDataDict, fp1)
+jsonOutAddr = 'data/socialData' + '.json'
+try:
+	with open(jsonOutAddr, 'w') as fp1: json.dump(socialDataDict, fp1)
 
 
-		print("\nSuccess Creating Crypto Json on/at: " + str(jsonOutAddr) + "\n")
+	print("\nSuccess Creating Crypto Json on/at: " + str(jsonOutAddr) + "\n")
 
-	except Exception as e:
-		print(e)	
+except Exception as e:
+	print(e)	
