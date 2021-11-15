@@ -88,13 +88,17 @@ def fetchStats(coin, targetDate):
 socialDataDict, rqCount = {}, 0
 
 for targetDate in lastYearDateList:
-	if rqCount > 45:
+	if rqCount > 25:
 		time.sleep(60)
 		rqCount = 0
 	else:
 		targetDateDMY = mdyTodmy(targetDate)
 		print("Fetched data for: " + str(targetDate))
-		socialData = fetchStats('cardano', targetDateDMY)
+		try:	
+			socialData = fetchStats('cardano', targetDateDMY)
+		except Exception as e:
+			socialData = {'error msg': str(e)}
+
 		socialDataDict.update({targetDate: socialData})
 	
 	rqCount = rqCount + 1
