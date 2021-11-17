@@ -12,3 +12,4 @@
 ![Plot.py Screenshot](/images/plotScreenshot.png) 
 4. Create and analyze correlation coefficient data with [corrCoef.py](corrCoef.py) and [analyzeCC.py](analyzeCC.py)
 5. Analyze trends in social-media engagement using the [social.py](social.py) script.
+  - The social.py script uses the time.sleep() function to operate within the limits of the free coingecko subscription (it takes a while).
