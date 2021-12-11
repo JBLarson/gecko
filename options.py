@@ -94,29 +94,44 @@ def callReturnFunc(currency, strikePrice, expPrice, numContracts, contractCost):
 
 def strangleFunc(callOption, putOption):
 	callValue, putValue = callOption['value'], putOption['value']
+	callCost, putCost = callOption['cost'], putOption['cost']
 
 	netValue = ro2(callValue + putValue)
 
-	strangeDict = {'net': netValue, 'expiry': putOption['expiryPrice'], 'putStrike': putOption['strike'], 'callStrike': callOption['strike']}
+	strangleDict = {'net': netValue, 'expiry': putOption['expiryPrice'], 'putStrike': putOption['strike'], 'callStrike': callOption['strike'], 'callCost': callCost, 'putCost': putCost}
 
 	#print(callOption)
 	#print(putOption)
 	#print("\nNet Option Value: $" + str(netValue))
-	return strangeDict
+	return strangleDict
 
 
 #print("Function output")
 #testStrangle = strangleFunc(testCall, testPut)
 #print(testStrangle)
 
+def strangleResults(lowRange, highRange, rangeStep):
+	strangleResultList = []
+	for expiryPrice in np.arange(lowRange, highRange, rangeStep):
+		testCall = callReturnFunc('btc', 50000, expiryPrice, 1, 1255)
+		testPut = putReturnFunc('btc', 50000, expiryPrice, 1, 3607)
+		strangle = strangleFunc(testCall, testPut)
+		strangleResultList.append(strangle)
+	return strangleResultList
 
-testExpPrice = 45000
 
-for expiryPrice in np.arange(45000, 55000, 1000):
-	testCall = callReturnFunc('btc', 50000, expiryPrice, 1, 1200)
-	testPut = putReturnFunc('btc', 48000, expiryPrice, 1, 1940)
-	strangle = strangleFunc(testCall, testPut)
-	print(strangle)
+
+strangleList = strangleResults(42000, 60000, 500)
+#print(strangleList)
+
+
+for strangleResult in strangleList:
+	strangleCost = ro2(strangleResult['putCost'] + strangleResult['callCost'])
+	#print(str(strangleResult['expiry']) + " " + str(strangleResult['net']))
+	print(strangleResult)
+
+
+
 """
 testContractPrice = 2593
 testQty = 1
