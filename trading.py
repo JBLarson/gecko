@@ -21,14 +21,15 @@ def exitTrades(inputTrade):
 
 	for exitPrice in np.arange(inputPrice-inputPrice*0.25, inputPrice+inputPrice*0.25, inputPrice/50):
 		exitPrice = ro6(exitPrice)
+		exitPricePchange = -ro2((inputPrice - exitPrice)/inputPrice*100)
 		exitCost = ro4(exitPrice*inputQty)
 		profitLoss = ro4(exitCost - inputCost)
-		print('Exit Price: ' + str(exitPrice) + '  Value: $' + str(exitCost) + '  P/L: $' + str(profitLoss))
+		print('Exit Price: ' + str(exitPrice) + '  Value: $' + str(exitCost) + '  P/L: $' + str(profitLoss) + '  % chg: ' + str(exitPricePchange))
 		
 
 
 
-inputPrice, inputQty = sys.argv[1], sys.argv[2]
+inputPrice, inputQty = float(sys.argv[1]), float(sys.argv[2])
 trade0 = tradeDict(inputPrice, inputQty)
 
 
