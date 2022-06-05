@@ -3,7 +3,7 @@
 import time
 import datetime
 import json
-from geckoFuncz import unixToDatetime, datetimeToUnix, analyzeAllTokens, stdDevFunc, pChangeFunc
+from geckoFuncz import unixToDatetime, datetimeToUnix
 
 
 # import symbolName data
@@ -36,11 +36,14 @@ epochOneYearAgo = datetimeToUnix(oneYearAgo)
 
 
 
-def getCoinDict(coin, baseCurrency, fromTimeStamp, toTimestamp):
+def getCoinDict(coin, baseCurrency):
 	from pycoingecko import CoinGeckoAPI
 	cg = CoinGeckoAPI()
 
-	coinApiRez = cg.get_coin_market_chart_range_by_id(id=coin, vs_currency=baseCurrency, from_timestamp=fromTimeStamp, to_timestamp=toTimestamp) # coin gecko coinApiRez
+	coinApiRez = cg.get_coin_market_chart_by_id(id=coin,vs_currency=baseCurrency,days='365')
+
+
+	#coinApiRez = cg.get_coin_market_chart_range_by_id(id=coin, vs_currency=baseCurrency, from_timestamp=fromTimeStamp, to_timestamp=toTimestamp) # coin gecko coinApiRez
 	coinRezPrices = coinApiRez['prices']
 	coinRezVolumes = coinApiRez['total_volumes']
 
@@ -65,7 +68,7 @@ def getCoinDict(coin, baseCurrency, fromTimeStamp, toTimestamp):
 def fetchTokenData(tokenName):
 	#tokenName = symbolNameFunc(tokenSymbol)
 	tokenName = tokenName.lower()
-	tokenUsd, tokenEur = getCoinDict(tokenName, 'usd', epochOneYearAgo, epochToday), getCoinDict(tokenName, 'eur', epochOneYearAgo, epochToday)
+	tokenUsd, tokenEur = getCoinDict(tokenName, 'usd'), getCoinDict(tokenName, 'eur')
 	tokenUsdEur = [tokenUsd, tokenEur]
 	return tokenUsdEur
 
@@ -85,50 +88,13 @@ def getAllTokens(symbolNameDict):
 
 	return tokenDataDict
 
-geckoData = getAllTokens(symbolNameDict)
-
-geckoKeys = list(geckoData.keys())
+allTokens = getAllTokens(symbolNameDict)
 
 
 
-# create sample stats for each token
-analyzeAll = analyzeAllTokens(geckoData)
-
-for aDict in analyzeAll:
-	aDictPair = aDict['pair']
-	
-	baseKeys = geckoData.keys()
-	for baseKey in baseKeys:
-		currentGeckoDict = geckoData[baseKey]
-		currentGekkoQuote = currentGeckoDict['quote']
-		currentGekkoBase = currentGeckoDict['base']
-		currentGekkoPair = str(currentGekkoQuote).capitalize() + str(currentGekkoBase).capitalize()
-		if aDictPair == currentGekkoPair:
-			currentGeckoDict.update(aDict)
-
-
-
-
-# find stdDeviation for each token
-for geckoKey in geckoKeys:
-	currentGdict = geckoData[geckoKey]
-	currentPriceDict = currentGdict['data']
-	stdDev = stdDevFunc(currentPriceDict)
-	currentGdict.update({'stdDev': stdDev})
-
-
-
-# find daily percentage change for each token
-for geckoKey in geckoKeys:
-	currentTokenDict = geckoData[geckoKey]
-	pChangeDict = pChangeFunc(currentTokenDict)
-	currentTokenDict['pChange'] = pChangeDict
-
-
-
-jsonOutAddr = 'data/geckoAnalysis' + '.json'
+jsonOutAddr = 'data/OGgecko' + '.json'
 try:
-	with open(jsonOutAddr, 'w') as fp1: json.dump(geckoData, fp1)
+	with open(jsonOutAddr, 'w') as fp1: json.dump(allTokens, fp1)
 
 
 	print("\nSuccess Creating Crypto Json on/at: " + str(jsonOutAddr) + "\n")
