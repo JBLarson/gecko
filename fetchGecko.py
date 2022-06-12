@@ -1,9 +1,26 @@
 #!/usr/bin/python3
 
-import time
-import datetime
+from time import *
+from datetime import *
 import json
-from geckoFuncz import unixToDatetime, datetimeToUnix
+from geckoFuncz import *
+import math
+import dateparser
+
+
+
+#lambda functions for rounding
+ro1, ro2, ro6, ro8 = lambda x : round(x, 1), lambda x : round(x, 2), lambda x : round(x, 6), lambda x : round(x, 8)
+
+# ---
+# gecko API request section
+# ---
+
+
+time = datetime.datetime.now()
+dtRn = str(strftime("%x") + " " + strftime("%X"))
+justTime, justDate = strftime("%X"), strftime("%x")
+print("\nStarted fetching coin data on: " + str(justDate) + " at: " + str(justTime))
 
 
 # import symbolName data
@@ -13,92 +30,73 @@ with open(symbolNamesInAddr, 'r') as r:
 	symbolNameDict = json.load(r)
 
 
+geckoData = getAllTokens(symbolNameDict)
 
 
-def oneYearAgo(ogDT):
-	splitDT = ogDT.split("-")
-	year = splitDT[0]
+time = datetime.datetime.now()
+dtRn = str(strftime("%x") + " " + strftime("%X"))
+justTime, justDate = strftime("%X"), strftime("%x")
+print("\nCompleted fetching coin data on: " + str(justDate) + " at: " + str(justTime))
+
+
+# ---
+# sample stats section
+# ---
+
+
+time = datetime.datetime.now()
+dtRn = str(strftime("%x") + " " + strftime("%X"))
+justTime, justDate = strftime("%X"), strftime("%x")
+print("\nStarted creating sample stats on: " + str(justDate) + " at: " + str(justTime))
+
+
+geckoKeys = list(geckoData.keys())
+
+
+analyzeAll = analyzeAllTokens(geckoData)
+
+
+
+for aDict in analyzeAll:
+	aDictPair = aDict['pair']
 	
-	restOfDt = str(splitDT[1]) +"-" + str(splitDT[2])
-	yearMinusOne = int(year) - 1
-	oneYearResult = str(yearMinusOne) + "-" + str(restOfDt)
-	
-	return oneYearResult
-
-
-today = datetime.datetime.now()
-today = str(today).split(".")
-today = today[0]
-oneYearAgo = oneYearAgo(today)
-
-epochToday = datetimeToUnix(today)
-epochOneYearAgo = datetimeToUnix(oneYearAgo)
+	baseKeys = geckoData.keys()
+	for baseKey in baseKeys:
+		currentGeckoDict = geckoData[baseKey]
+		currentGekkoQuote = currentGeckoDict['quote']
+		currentGekkoBase = currentGeckoDict['base']
+		currentGekkoPair = str(currentGekkoQuote).capitalize() + str(currentGekkoBase).capitalize()
+		if aDictPair == currentGekkoPair:
+			currentGeckoDict.update(aDict)
 
 
 
-def getCoinDict(coin, baseCurrency):
-	from pycoingecko import CoinGeckoAPI
-	cg = CoinGeckoAPI()
 
-	coinApiRez = cg.get_coin_market_chart_by_id(id=coin,vs_currency=baseCurrency,days='365')
-
-
-	#coinApiRez = cg.get_coin_market_chart_range_by_id(id=coin, vs_currency=baseCurrency, from_timestamp=fromTimeStamp, to_timestamp=toTimestamp) # coin gecko coinApiRez
-	coinRezPrices = coinApiRez['prices']
-	coinRezVolumes = coinApiRez['total_volumes']
-
-	volumeDict, priceDict = {}, {}
-	for price in coinRezPrices:
-		priceIndex = coinRezPrices.index(price)
-		unixTime = price[0]
-		volume = coinRezVolumes[priceIndex][1]
-		unixTime = int(str(unixTime)[:-3])
-		price = price[1]
-		localDT = unixToDatetime(unixTime)
-
-		priceDict.update({localDT: price})
-		volumeDict.update({localDT: volume})
-
-	returnDict = {"base": baseCurrency, "quote": coin, "data": priceDict, "volumeData": volumeDict}
-
-	return returnDict
+for geckoKey in geckoKeys:
+	currentGdict = geckoData[geckoKey]
+	stdDev = stdDevFunc(currentGdict)
+	currentGdict.update({'stdDev': stdDev})
 
 
 
-def fetchTokenData(tokenName):
-	#tokenName = symbolNameFunc(tokenSymbol)
-	tokenName = tokenName.lower()
-	tokenUsd, tokenEur = getCoinDict(tokenName, 'usd'), getCoinDict(tokenName, 'eur')
-	tokenUsdEur = [tokenUsd, tokenEur]
-	return tokenUsdEur
+
+time = datetime.datetime.now()
+dtRn = str(strftime("%x") + " " + strftime("%X"))
+justTime, justDate = strftime("%X"), strftime("%x")
+print("\nCompleted creating sample stats on: " + str(justDate) + " at: " + str(justTime))
 
 
 
-def getAllTokens(symbolNameDict):
-	tokenDataDict = {}
-	symbols = list(symbolNameDict.keys())
 
-	for symbol in symbols:
-		symbolName = symbolNameDict[symbol]
-		symbolDataList = fetchTokenData(symbolName)
-		for symbolData in symbolDataList:	
-			symbolBase = symbolData['base']
-			pair = str(symbol).capitalize() + str(symbolBase).capitalize()
-			tokenDataDict.update({pair: symbolData})
-
-	return tokenDataDict
-
-allTokens = getAllTokens(symbolNameDict)
-
-
-
-jsonOutAddr = 'data/OGgecko' + '.json'
+jsonOutAddr = 'data/geckoAnalysis.json'
 try:
-	with open(jsonOutAddr, 'w') as fp1: json.dump(allTokens, fp1)
+	with open(jsonOutAddr, 'w') as fp1: json.dump(geckoData, fp1)
+
+	print("\nSuccess saving JSON file at: " + str(jsonOutAddr) + '\n')
 
 
-	print("\nSuccess Creating Crypto Json on/at: " + str(jsonOutAddr) + "\n")
+except Exception as e: print(e)
 
-except Exception as e:
-	print(e)
+
+
 
