@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 from time import *
-from datetime import *
+import datetime
 import json
 from geckoFuncz import *
 import math
