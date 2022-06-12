@@ -1,15 +1,32 @@
 # Gecko
 
-**Analyze Price data for blockchain companies with the CoinGecko API using the PyCoinGecko library**
+## Analyze daily prices and 7, 30, 50, and 200-day moving averages
+## For BTC, ETH, KAVA, XMR, ATOM, and DAI
+#### Data provided by the CoinGecko API using the PyCoinGecko library
 
 1. Create environment and install dependencies
     * >> python3 -m venv geckoEnv
     * >> source geckoEnv/bin/activate
     * >> pip install -r req.txt
+
+
 2. Run [main.sh](main.sh)
-    * Executes [fetchGecko.py](fetchGecko.py) && [sma.py](sma.py)
+    * Executes [fetchGecko.py](fetchGecko.py) && [movingAvgs.py](movingAvgs.py)
+
+
 3. Visualize data with a PyQt5 GUI using matplotlib with [plot.py](plot.py)
-![Plot.py Screenshot](/images/plotScreenshot.png) 
-4. Create and analyze correlation coefficient data with [corrCoef.py](corrCoef.py) and [analyzeCC.py](analyzeCC.py)
-5. Analyze trends in social-media engagement using the [social.py](social.py) script.
-  - The social.py script takes about 10 minutes. It uses the time.sleep() function to operate within the limits of the free coingecko subscription.
+   * >> Select a date range to analyze
+   * >> ![plot.py screenshot 1](/images/dateRange.png)
+   * >> Use the simple GUI to choose which pair you want to view
+   * >> ![plot.py screenshot 2](/images/gui.png)
+   * >> Try to recognize trends between price and various moving averages
+   * >> Moving the mouse around the chart show's different dates / prices
+   * >> The dates on the X-axis clearly need work
+   * >> ![plot.py screenshot 3](/images/kavaChart.png)
+
+
+## Work in progress: analyzing correlation coefficient
+
+Create and analyze correlation coefficient data with [correlation.py](correlation.py)
+
+#### More to come!
