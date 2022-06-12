@@ -1,14 +1,95 @@
 
-from time import strftime, strptime
-from datetime import datetime
+from time import *
+from datetime import *
 import json
 import dateparser
 import math
-from ezDT import *
+import numpy as np
+
+# ---
+# for api request part of fetchGecko
+# ---
 
 
-# function that returns high price in price dict
-def maxFunc(targetDict):
+# convert a unix epoch value to YYYY-MM-DD
+def epochToDatetime(epochTime):
+	localTime = time.strftime('%Y-%m-%d', time.localtime(epochTime))
+
+	return localTime
+
+
+
+# get data from the coingecko API using a coin's symbol and a base fiat currency
+
+def getCoinDict(coin, baseCurrency):
+	from pycoingecko import CoinGeckoAPI
+	cg = CoinGeckoAPI()
+
+	coinApiRez = cg.get_coin_market_chart_by_id(id=coin,vs_currency=baseCurrency,days='365')
+
+	coinRezPrices = coinApiRez['prices']
+	coinRezVolumes = coinApiRez['total_volumes']
+
+	volumeDict, priceDict = {}, {}
+	for price in coinRezPrices:
+		priceIndex = coinRezPrices.index(price)
+		unixTime = price[0]
+		volume = coinRezVolumes[priceIndex][1]
+		unixTime = int(str(unixTime)[:-3])
+		price = price[1]
+		localDT = epochToDatetime(unixTime)
+
+		priceDict.update({localDT: price})
+		volumeDict.update({localDT: volume})
+
+	returnDict = {"base": baseCurrency, "quote": coin, "data": priceDict, "volumeData": volumeDict}
+
+	return returnDict
+
+
+
+# potentially unneccessary function to call the previous function
+# was useful for when this supported multiple base currencies
+
+def fetchTokenData(tokenName):
+	#tokenName = symbolNameFunc(tokenSymbol)
+	tokenName = tokenName.lower()
+	tokenUsd = getCoinDict(tokenName, 'usd')
+	tokenUsd = [tokenUsd]
+	return tokenUsd
+
+
+
+# get all the tokens in the data/symbolNames.json file
+def getAllTokens(symbolNameDict):
+	tokenDataDict = {}
+	symbols = list(symbolNameDict.keys())
+
+	for symbol in symbols:
+		symbolName = symbolNameDict[symbol]
+		symbolDataList = fetchTokenData(symbolName)
+		for symbolData in symbolDataList:	
+			symbolBase = symbolData['base']
+			pair = str(symbol).capitalize() + str(symbolBase).capitalize()
+			tokenDataDict.update({pair: symbolData})
+
+	return tokenDataDict
+
+
+# ---
+# for sample stats part of fetchGecko
+# ---
+
+
+# return the percent change between two numbers
+def percentChange(fromNum, toNum):
+	pChange = ((toNum - fromNum)/fromNum)*100
+	return pChange
+
+
+
+# function that returns 52W-high
+def listMaxFunc(targetDict):
 	firstKey = (list(targetDict.keys()))[0]
 	maxItem = {firstKey: targetDict[firstKey]}
 	targetKeys = targetDict.keys()
@@ -20,9 +101,8 @@ def maxFunc(targetDict):
 
 
 
-
-# function that returns low price in price dict
-def minFunc(targetDict):
+# function that returns 52W-low
+def listMinFunc(targetDict):
 	firstKey = (list(targetDict.keys()))[0]
 	minItem = {firstKey: targetDict[firstKey]}
 	targetKeys = targetDict.keys()
@@ -34,10 +114,8 @@ def minFunc(targetDict):
 
 
 
-
-
-# function that returns avg price for priceDict
-def avgFunc(targetDict):
+# function that returns 52W avg price
+def listAvgFunc(targetDict):
 	targetList = list(targetDict.values())
 	sumOfRates = 0
 	for rate in targetList:
@@ -48,8 +126,9 @@ def avgFunc(targetDict):
 
 
 
-def stdDevFunc(currentPriceData):
-	currentAvg = avgFunc(currentPriceData)
+def stdDevFunc(currentGeckoDict):
+	currentPriceData = currentGeckoDict['data']
+	currentAvg = currentGeckoDict['avg']
 	currentMeanDevSquaredSum = 0
 	for currentDate in currentPriceData:
 		currentPrice = currentPriceData[currentDate]
@@ -67,9 +146,9 @@ def analyzeTokenFunc(targetDict):
 	targetQuote, targetBase = targetDict['quote'], targetDict['base']
 	targetDictList = targetDict['data']
 	targetPair = str(targetQuote).capitalize() + str(targetBase).capitalize()
-	listAvgPrice = avgFunc(targetDictList)
-	listMinPrice = minFunc(targetDictList)
-	listMaxPrice = maxFunc(targetDictList)
+	listAvgPrice = listAvgFunc(targetDictList)
+	listMinPrice = listMinFunc(targetDictList)
+	listMaxPrice = listMaxFunc(targetDictList)
 	listAnalysis = {'pair': targetPair, 'avg': listAvgPrice, 'max': listMaxPrice, 'min': listMinPrice}
 
 	return listAnalysis
@@ -90,33 +169,12 @@ def analyzeAllTokens(geckoData):
 
 
 
-# use upToDateFunc to determine if price's need to be updated
-
-def upToDateFunc(geckoData):
-	# datetime variables
-	todayOG = datetime.now()
-	todaySplit = str(todayOG).split(" ")
-	today = todaySplit[0]
-
-	latestDateList = []
-
-	geckoKeys = list(geckoData.keys())
-	for key in geckoKeys:
-		currentGeckoData = geckoData[key]
-		priceData = currentGeckoData['data']
-		priceDates = list(priceData.keys())
-		priceDates.sort(reverse=False)
-		latestPriceDate = priceDates[-1]
-		latestDateList.append(latestPriceDate)
-
-	for date in latestDateList:
-		if date == today:
-			upToDateOutput = True
-		else:
-			upToDateOutput = False
 
 
-	return upToDateOutput
+# ---
+# for finding simple moving avgs in movingAvgs.py
+# ---
+
 
 
 def nDayFunc(ogDt, n):
@@ -127,7 +185,7 @@ def nDayFunc(ogDt, n):
 	halfN = n / 2
 
 	for dayCounter in np.arange(halfN):
-		dtDt = dateparser.parse(ogDt)
+		dtDt = dateparser.parse(ogDt, settings={'TIMEZONE': 'UTC'})
 
 		dayCounter = dayCounter+1
 		addDaysFull = dtDt + timedelta(days = dayCounter)
@@ -145,60 +203,18 @@ def nDayFunc(ogDt, n):
 
 
 
+def movingAvgFunc(dataSet, centerDate, n):
+	nDayList = nDayFunc(centerDate, n)
+	analysisDict = {}
+	dateKeys = list(dataSet.keys())
+	for dateKey in dateKeys:
+		if dateKey in nDayList:
+			currentPrice = dataSet[dateKey]		
+			currentPriceDict = {dateKey: currentPrice}
+			analysisDict.update(currentPriceDict)
+	
+	dataAvgPrice = listAvgFunc(analysisDict)
+	movingAvgDict = {centerDate: dataAvgPrice}
 
-
-
-def createJsonFunc(jsonOutAddr, jsonData):
-	try:
-		with open(jsonOutAddr, 'w') as fp1: json.dump(jsonData, fp1)
-		functionOutput = ("\nSuccess Creating JSON at: " + str(jsonOutAddr) + "\n")
-
-	except Exception as e:
-		functionOutput = "\nFailed to create JSON. Error msg:\n" + str(e)
-
-	return functionOutput
-
-
-
-
-def readJsonFunc(jsonInAddr):
-	with open(jsonInAddr, 'r') as r:
-		jsonOutputDict = json.load(r)
-	return jsonOutputDict
-
-
-
-
-def echoDt(scriptStatus, scriptType):
-	time = datetime.datetime.now()
-	dtRn = str(strftime("%x") + " " + strftime("%X"))
-	justTime, justDate = strftime("%X"), strftime("%x")
-	echoDtOutput = ("\n" + str(scriptStatus) + " " + str(scriptType) + " Script on: " + str(justDate) + " at: " + str(justTime) + "\n")
-	print(echoDtOutput)
-	return echoDtOutput
-
-
-
-def percentChange(fromNum, toNum):
-	pChange = ((toNum - fromNum)/fromNum)*100
-	return pChange
-
-
-
-
-def pChangeFunc(tokenDict):
-	pChangeDict = {}
-	tokenPrices = tokenDict['data']
-	tokenDates = list(tokenPrices.keys())
-	for currentDate in tokenDates:
-		dateIndex = tokenDates.index(currentDate)
-		currentPrice = tokenPrices[currentDate]
-		if dateIndex != 0:
-			lastDate = tokenDates[dateIndex-1]
-			lastPrice = tokenPrices[lastDate]
-			currentPChange = percentChange(lastPrice, currentPrice)
-			pChangeDict.update({currentDate: currentPChange})
-
-	return pChangeDict
-
+	return movingAvgDict
 
