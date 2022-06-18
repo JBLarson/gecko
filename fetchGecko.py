@@ -17,7 +17,7 @@ ro1, ro2, ro6, ro8 = lambda x : round(x, 1), lambda x : round(x, 2), lambda x : 
 # ---
 
 
-time = datetime.datetime.now()
+time = datetime.now()
 dtRn = str(strftime("%x") + " " + strftime("%X"))
 justTime, justDate = strftime("%X"), strftime("%x")
 print("\nStarted fetching coin data on: " + str(justDate) + " at: " + str(justTime))
@@ -33,7 +33,7 @@ with open(symbolNamesInAddr, 'r') as r:
 geckoData = getAllTokens(symbolNameDict)
 
 
-time = datetime.datetime.now()
+time = datetime.now()
 dtRn = str(strftime("%x") + " " + strftime("%X"))
 justTime, justDate = strftime("%X"), strftime("%x")
 print("\nCompleted fetching coin data on: " + str(justDate) + " at: " + str(justTime))
@@ -44,7 +44,7 @@ print("\nCompleted fetching coin data on: " + str(justDate) + " at: " + str(just
 # ---
 
 
-time = datetime.datetime.now()
+time = datetime.now()
 dtRn = str(strftime("%x") + " " + strftime("%X"))
 justTime, justDate = strftime("%X"), strftime("%x")
 print("\nStarted creating sample stats on: " + str(justDate) + " at: " + str(justTime))
@@ -80,7 +80,7 @@ for geckoKey in geckoKeys:
 
 
 
-time = datetime.datetime.now()
+time = datetime.now()
 dtRn = str(strftime("%x") + " " + strftime("%X"))
 justTime, justDate = strftime("%X"), strftime("%x")
 print("\nCompleted creating sample stats on: " + str(justDate) + " at: " + str(justTime))
