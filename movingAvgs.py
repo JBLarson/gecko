@@ -39,19 +39,26 @@ def createMovingAvgDict(tokenPair, n):
 
 
 for geckoKey in geckoKeys:
-	currentMovingAvg7Dict = createMovingAvgDict(geckoKey, 7)
-	currentMovingAvg30Dict = createMovingAvgDict(geckoKey, 30)
-	currentMovingAvg50Dict = createMovingAvgDict(geckoKey, 50)
-	currentMovingAvg200Dict = createMovingAvgDict(geckoKey, 200)
 
 	currentGeckoData = geckoData[geckoKey]
+
+
+	# added more text output bc this script is slow as balls
+	currentMovingAvg7Dict = createMovingAvgDict(geckoKey, 7)
+	print("Added 7-day SMA for: " + str(currentGeckoData['pair']))
+	currentMovingAvg30Dict = createMovingAvgDict(geckoKey, 30)
+	print("Added 30-day SMA for: " + str(currentGeckoData['pair']))
+	currentMovingAvg50Dict = createMovingAvgDict(geckoKey, 50)
+	print("Added 50-day SMA for: " + str(currentGeckoData['pair']))
+	currentMovingAvg200Dict = createMovingAvgDict(geckoKey, 200)
+	print("Added 200-day SMA for: " + str(currentGeckoData['pair']))
+
+
 
 	currentGeckoData['movingAvg7'] = currentMovingAvg7Dict
 	currentGeckoData['movingAvg30'] = currentMovingAvg30Dict
 	currentGeckoData['movingAvg50'] = currentMovingAvg50Dict
 	currentGeckoData['movingAvg200'] = currentMovingAvg200Dict
-
-	print("Added 7-day, 30-day, 50-day, & 200-day SMA for: " + str(currentGeckoData['pair']))
 
 
 
