@@ -6,7 +6,13 @@ import json
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
+from matplotlib.dates import DayLocator, HourLocator, DateFormatter, drange
+import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
+
+import numpy as np
+import datetime
+
 
 #lambda functions for rounding
 ro1, ro2, ro6, ro8 = lambda x : round(x, 1), lambda x : round(x, 2), lambda x : round(x, 6), lambda x : round(x, 8)
@@ -44,12 +50,36 @@ def plotTokenFunc(tokenSymbol, startDateIndex, endDateIndex):
 		prices.append(tokenPairPrices[key])
 		volumes.append(tokenPairVolume[key])
 
+	print(smaDates[0])
+	print(smaDates[-1])
+	print(smaDates[-1:])
+	plotDates = []
+	for i in range(1, 9):
+		if i == 1:
+			plotDates.append(smaDates[0])
+		elif i != 1:
+			i = i - 1
+			nextDateIndex = round((i*(len(smaDates)/7)), 0)
+			nextDate = smaDates[int(nextDateIndex-1)]
+			plotDates.append(nextDate)
+
+	#dates = drange(smaDates[0], smaDates[-1], drange)
+
+
+
+	indexList, plotZeroList = [], []
+	for i in range(len(smaDates)):	indexList.append(i)
+
+	for i in range(len(plotDates)):	plotZeroList.append(0)
 
 	plt.plot(smaDates, prices, label="Price")
 	plt.plot(smaDates, sma7Prices, label="7-Day SMA")
 	plt.plot(smaDates, sma30Prices, label="30-Day SMA")
 	plt.plot(smaDates, sma50Prices, label="50-Day SMA")
 	plt.plot(smaDates, sma200Prices, label="200-Day SMA")
+	
+
+	#plt.plot(plotDates, plotZeroList)
 
 	plt.ylabel('Price')
 
