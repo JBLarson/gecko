@@ -16,11 +16,13 @@ ccDict = readJsonFunc('data/cc.json')
 geckoData = readJsonFunc('data/gData2.json')
 
 
-ethUsd = geckoData['EthUsd']
+ethUsd, kavaUsd = geckoData['EthUsd'], geckoData['KavaUsd']
 
 
 print(ethUsd.keys())
-#print('\n')
+print('\n')
+
+
 
 def analyzeGeckoOld(inputGecko):
 	geckoKeys = list(inputGecko.keys())
@@ -36,7 +38,7 @@ def analyzeGeckoOld(inputGecko):
 
 
 
-
+"""
 
 
 def analyzeCrypto(inputCrypto):
@@ -48,11 +50,11 @@ def analyzeCrypto(inputCrypto):
 
 	print(avg0)
 	dateList = list(price.keys())
-	pList, vList = [], []
-	for iDate in dateList:
+	dList, pList, vList = [], [], []
+	for iDate in dateList[0:30]:
 		
 		print('\n')
-		print(iDate)
+		dList.append(iDate)
 		pList.append(price[iDate])
 		vList.append(volume[iDate])
 
@@ -63,18 +65,90 @@ def analyzeCrypto(inputCrypto):
 	figure, axis = plt.subplots(2, 2)
 
 	
-	axis[0, 0].plot(dateList, pList)
+	axis[0, 0].plot(dList, pList)
 	axis[0, 0].set_title("Price")
 
-	axis[0, 1].plot(dateList, vList)
-	axis[0, 1].set_title("Price")
+	axis[0, 1].plot(dList, vList)
+	axis[0, 1].set_title("Volume")
+
+	axis[1, 0].plot(dList, pList)
+	axis[1, 0].set_title("Price")
+
+	axis[1, 1].plot(dList, vList)
+	axis[1, 1].set_title("Price")
+
+
+
+	plt.show()
+
+analyzeCrypto(ethUsd)
+	"""
+
+
+
+
+
+
+def plotTwo(inputCrypto0, inputCrypto1):
+	quoteCurrency0, quoteCurrency1 = inputCrypto0['quote'], inputCrypto1['quote']
+
+	price0, volume0 = inputCrypto0['data'], inputCrypto0['volumeData']
+	avg0, max0, min0, stdDev0 = inputCrypto0['avg'], inputCrypto0['max'], inputCrypto0['min'], inputCrypto0['stdDev']
+
+
+	price1, volume1 = inputCrypto1['data'], inputCrypto1['volumeData']
+	avg1, max1, min1, stdDev1 = inputCrypto1['avg'], inputCrypto1['max'], inputCrypto1['min'], inputCrypto1['stdDev']
+
+
+
+	print(quoteCurrency0)
+	print('&')
+	print(quoteCurrency1)
+
+
+	dateList = list(price0.keys())
+	dList, pList0, vList0 = [], [], []
+	pList1, vList1 = [], []
+	
+	for iDate in dateList[0:30]:
+		
+		print('\n')
+		dList.append(iDate)
+		pList0.append(price0[iDate])
+		vList0.append(volume0[iDate])
+		pList1.append(price1[iDate])
+		vList1.append(volume1[iDate])
+
+		print(volume1[iDate])
+
+	
+
+	figure, axis = plt.subplots(2, 2)
+
+	
+	axis[0, 0].plot(dList, pList0)
+	axis[0, 0].set_title("Price")
+
+	axis[0, 1].plot(dList, vList0)
+	axis[0, 1].set_title("Volume")
+
+	axis[1, 0].plot(dList, pList1)
+	axis[1, 0].set_title("Price")
+
+	axis[1, 1].plot(dList, vList1)
+	axis[1, 1].set_title("Price")
+
+
 
 	plt.show()
 
 
-gTest = analyzeCrypto(ethUsd)
+gTest = plotTwo(ethUsd, kavaUsd)
 
 
+
+
+# make it with just one plot
 
 
 
