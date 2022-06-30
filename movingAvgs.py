@@ -14,7 +14,7 @@ ro1, ro2, ro6, ro8 = lambda x : round(x, 1), lambda x : round(x, 2), lambda x : 
 time = datetime.now()
 dtRn = str(strftime("%x") + " " + strftime("%X"))
 justTime, justDate = strftime("%X"), strftime("%x")
-print("\nStarted 7-day, 30-day, 50-day & 200-day SMA Script on: " + str(justDate) + " at: " + str(justTime) + "\n")
+print("\nStarted 3-day, 7-day, 14-day, 30-day, 50-day, 90-day, & 200-day SMA Script on: " + str(justDate) + " at: " + str(justTime) + "\n")
 
 
 
@@ -44,20 +44,28 @@ for geckoKey in geckoKeys:
 
 
 	# added more text output bc this script is slow as balls
+	currentMovingAvg3Dict = createMovingAvgDict(geckoKey, 3)
+	print("Added 3-day SMA for: " + str(currentGeckoData['pair']))
 	currentMovingAvg7Dict = createMovingAvgDict(geckoKey, 7)
 	print("Added 7-day SMA for: " + str(currentGeckoData['pair']))
+	currentMovingAvg14Dict = createMovingAvgDict(geckoKey, 14)
+	print("Added 14-day SMA for: " + str(currentGeckoData['pair']))
 	currentMovingAvg30Dict = createMovingAvgDict(geckoKey, 30)
 	print("Added 30-day SMA for: " + str(currentGeckoData['pair']))
 	currentMovingAvg50Dict = createMovingAvgDict(geckoKey, 50)
 	print("Added 50-day SMA for: " + str(currentGeckoData['pair']))
+	currentMovingAvg90Dict = createMovingAvgDict(geckoKey, 90)
+	print("Added 90-day SMA for: " + str(currentGeckoData['pair']))
 	currentMovingAvg200Dict = createMovingAvgDict(geckoKey, 200)
 	print("Added 200-day SMA for: " + str(currentGeckoData['pair']))
 
 
-
+	currentGeckoData['movingAvg3'] = currentMovingAvg3Dict
 	currentGeckoData['movingAvg7'] = currentMovingAvg7Dict
+	currentGeckoData['movingAvg14'] = currentMovingAvg14Dict
 	currentGeckoData['movingAvg30'] = currentMovingAvg30Dict
 	currentGeckoData['movingAvg50'] = currentMovingAvg50Dict
+	currentGeckoData['movingAvg90'] = currentMovingAvg90Dict
 	currentGeckoData['movingAvg200'] = currentMovingAvg200Dict
 
 
@@ -69,8 +77,8 @@ print("\nCompleted sort on: " + str(justDate) + " at: " + str(justTime) + "\n")
 
 
 
-
 jsonOutAddr = 'data/geckoAnalysis2.json'
+
 try:
 	with open(jsonOutAddr, 'w') as fp1: json.dump(geckoData, fp1)
 
