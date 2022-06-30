@@ -5,8 +5,8 @@ import numpy as np
 
 
 
-
-
+#lambda functions for rounding
+ro1, ro2, ro4, ro6, ro8 = lambda x : round(x, 1), lambda x : round(x, 2), lambda x : round(x, 4), lambda x : round(x, 6), lambda x : round(x, 8)
 
 
 
@@ -49,77 +49,6 @@ def pChangeFunc(tokenDict):
 
 	return pChangeDict
 
-
-
-
-
-
-
-
-#lambda functions for rounding
-ro1, ro2, ro4, ro6, ro8 = lambda x : round(x, 1), lambda x : round(x, 2), lambda x : round(x, 4), lambda x : round(x, 6), lambda x : round(x, 8)
-
-
-geckoData = readJsonFunc('data/gData.json')
-geckoKeys = list(geckoData.keys())
-
-"""
-ethUsd = geckoData['EthUsd']
-
-print(ethUsd)
-
-print('\n')
-
-print(geckoKeys)
-print('\nGecko keys above eth below')
-print(ethUsd.keys())
-
-
-ethPrices = ethUsd['data']
-
-print(ethPrices)
-priceDates = list(ethPrices.keys())
-
-
-
-for pDate in priceDates:
-
-	price = ethPrices[pDate]
-	print(price)
-
-
-"""
-
-
-
-
-
-
-# find daily percentage change for each token price
-for geckoKey in geckoKeys:
-	currentTokenDict = geckoData[geckoKey]
-	pChangeDict = pChangeFunc(currentTokenDict)
-	currentTokenDict['pChange'] = pChangeDict
-
-
-
-
-# find daily percentage change for each token vol
-for geckoKey in geckoKeys:
-	currentTokenDict = geckoData[geckoKey]
-	pChangeDict = pChangeFuncVol(currentTokenDict)
-	currentTokenDict['vpChange'] = pChangeDict
-
-
-
-
-#print(geckoData)
-
-
-
-createJsonFunc('data/gData2.json', geckoData)
-
-geckoData = readJsonFunc('data/gData2.json')
 
 
 
@@ -213,6 +142,51 @@ def movingCorrCoefFunc(geckoKey, n):
 
 
 
+
+
+geckoData = readJsonFunc('data/gData.json')
+geckoKeys = list(geckoData.keys())
+
+
+
+# find daily percentage change for each token price
+for geckoKey in geckoKeys:
+	currentTokenDict = geckoData[geckoKey]
+	pChangeDict = pChangeFunc(currentTokenDict)
+	currentTokenDict['pChange'] = pChangeDict
+
+
+
+
+# find daily percentage change for each token vol
+for geckoKey in geckoKeys:
+	currentTokenDict = geckoData[geckoKey]
+	pChangeDict = pChangeFuncVol(currentTokenDict)
+	currentTokenDict['vpChange'] = pChangeDict
+
+
+
+
+#print(geckoData)
+
+
+
+
+try:
+	writeGdata = createJsonFunc('data/gData2.json', geckoData)
+	print(writeGdata)
+
+except Exception as e:
+	print(e)
+
+
+'''
+
+geckoData = readJsonFunc('data/gData2.json')
+
+
+# commented out a section for finding correlation coefficient stats
+
 cc365Dict, cc180Dict, cc90Dict, cc30Dict = {}, {}, {}, {}
 
 for geckoKey in geckoKeys:
@@ -255,7 +229,7 @@ except Exception as e:
 	print(e)
 
 
-
+'''
 
 print('\nComplete\n')
 
