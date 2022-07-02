@@ -144,7 +144,10 @@ def movingCorrCoefFunc(geckoKey, n):
 
 
 
-geckoData = readJsonFunc('data/gData.json')
+#geckoData = readJsonFunc('data/gData.json')
+geckoData = readJsonFunc('data/geckoAnalysis2.json')
+
+
 geckoKeys = list(geckoData.keys())
 
 
@@ -180,7 +183,6 @@ except Exception as e:
 	print(e)
 
 
-'''
 
 geckoData = readJsonFunc('data/gData2.json')
 
@@ -229,7 +231,7 @@ except Exception as e:
 	print(e)
 
 
-'''
+
 
 print('\nComplete\n')
 
