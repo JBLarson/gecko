@@ -31,6 +31,12 @@ def maDiff(JB3USD):
 
 	ma3, ma7, ma14, ma30, ma50, ma90, ma200 = JB3USD['movingAvg3'], JB3USD['movingAvg7'], JB3USD['movingAvg14'], JB3USD['movingAvg30'], JB3USD['movingAvg50'], JB3USD['movingAvg90'], JB3USD['movingAvg200']
 
+	print(len(ma7))
+	print(ma7)
+	for i in range(len(ma7)):
+		print(str(ma3[i]) + '   ' + str(ma7[i]))
+
+
 	madDictList = []
 	for dateKey in dateList[0:]:
 		madDict = {'date': dateKey, 'd3_7': None, 'd3_14': None, 'd3_30': None,
@@ -59,16 +65,16 @@ def maDiff(JB3USD):
 		d50_90, d50_200, d90_200 = ro2((c50 - c90)/c90), ro2((c50 - c200)/c200), ro2((c90 - c200)/c200)
 		currentPrice, currentPchange = ro2(priceData[dateKey]), ro4(pChange[dateKey])
 
-		#print(d7_30)
 
+		# saving data from gecko dictionary to moving avg analysis dict
+		madDict['pChange'], madDict['price'] = currentPchange, currentPrice
+		madDict['d3_7'], madDict['d3_14'], madDict['d7_14'] = ro2(d3_7*100), ro2(d3_14*100), ro2(d7_14*100)
 
-		madDict['d3_7'], madDict['d3_14'], madDict['d3_30'], madDict['d3_50'], madDict['d3_90'], madDict['d3_200'] = d3_7, d3_14, d3_30, d3_50, d3_90, d3_200
-
-		madDict['d7_14'], madDict['d7_30'], madDict['d7_50'], madDict['d7_90'], madDict['d7_200'] = d7_14, d7_30, d7_50, d7_90, d7_200
+		
+		madDict['d3_200'], madDict['d7_30'], madDict['d7_50'], madDict['d7_90'], madDict['d7_200'] = d3_200, d7_30, d7_50, d7_90, d7_200
 		madDict['d14_30'], madDict['d14_50'], madDict['d14_90'], madDict['d14_200'] = d14_30, d14_50, d14_90, d14_200
 		madDict['d30_50'], madDict['d30_90'], madDict['d30_200'] = d30_50, d30_90, d30_200
 		madDict['d50_90'], madDict['d50_200'], madDict['d90_200'] = d50_90, d50_200, d90_200
-		madDict['pChange'], madDict['price'] = currentPchange, currentPrice
 
 
 		#print(madDict)
@@ -76,7 +82,7 @@ def maDiff(JB3USD):
 
 
 		madDictList.append(madDict)
-
+		
 
 	return madDictList
 
@@ -88,6 +94,7 @@ targetMaDiff = maDiff(targetData)
 
 def plotMAdiff(maDiffList):
 	
+	pChangeList, volumeList = [], []
 	priceList, dateList = [], []
 	maPlotList3, maPlotList4, maPlotList5 = [], [], []
 	maPlotList0, maPlotList1, maPlotList2 = [], [], []
@@ -98,7 +105,7 @@ def plotMAdiff(maDiffList):
 		#print('\n')
 
 		dateList.append(maData['date'])
-		priceList.append(maData['pChange'])
+		priceList.append(maData['price'])
 		maPlotList0.append(maData['d7_30'])
 		maPlotList1.append(maData['d7_50'])
 		maPlotList2.append(maData['d7_200'])
@@ -123,39 +130,60 @@ def plotMAdiff(maDiffList):
 	print(len(maDiffList))
 
 
-	'''
 
-	figure, axis = plt.subplots(1, 1)
+	plotFigure = False
+	plotFigure = True
 
+	if plotFigure == True:
 
-
-	axis.plot(dateList, priceList, label="price")
-
-	axis.plot(dateList, maPlotList0, label="d7_30")
-	#axis.plot(dateList, maPlotList1, label="d7_50")
-	axis.plot(dateList, maPlotList2, label="d7_200")
-	#axis.plot(dateList, maPlotList3, label="d30_50")
-	#axis.plot(dateList, maPlotList4, label="d30_200")
-	axis.plot(dateList, maPlotList5, label="d50_200")
+		figure, axis = plt.subplots(1, 1)
 
 
-	plotTitle = str(currentPair) + "  -  Moving Average Variance"
-	axis.set_title(plotTitle)
+
+		#axis.plot(dateList, priceList, label="price")
+
+		axis.plot(dateList, maPlotList0, label="d7_30")
+		#axis.plot(dateList, maPlotList1, label="d7_50")
+		axis.plot(dateList, maPlotList2, label="d7_200")
+		#axis.plot(dateList, maPlotList3, label="d30_50")
+		#axis.plot(dateList, maPlotList4, label="d30_200")
+		axis.plot(dateList, maPlotList5, label="d50_200")
 
 
-	plt.legend()
-
-	plt.show()
-
-	'''
-
-plotEth = plotMAdiff(targetMaDiff)
+		plotTitle = str(currentPair) + "  -  Moving Average Variance"
+		axis.set_title(plotTitle)
 
 
-for maMath in targetMaDiff[-5:]:
-	print('\n')
-	#print(maMath)
-	currentKeys = list(maMath.keys())
-	for mKey in currentKeys:
-		print(str(mKey) + '   ' + str(maMath[mKey]))
+		plt.legend()
+
+		plt.show()
+
+
+#plotEth = plotMAdiff(targetMaDiff)
+
+theCount = 0
+print('\nDate Price d3_7 d3_14 d7_14\n')
+for maMath in targetMaDiff[0:]:
+	#print('\n')
+	testVar = maMath['d3_7']
+	#testVar = maMath['d3_14']
+	if testVar > 0.02:
+		theCount = theCount + 1
+		print(str(maMath['date']) + '   ' + str(maMath['price']) + '   ' + str(maMath['d3_7']) + '   ' + str(maMath['d3_14']) + '   ' + str(maMath['d7_14']))
+
+
+try:	
+	countPct = ro2(100-((len(targetMaDiff)-theCount)/len(targetMaDiff))*100)
+
+	print('\nNumber of records: ' + str(theCount) + '   ' + str(countPct) + '%')
+
+except Exception as e:
+	print('failed first attempt. error msg:')
+	print(e)
+	try:
+		print('\nNumber of records: ' + str(theCount))
+	except:
+		pass
+
+print(len(targetMaDiff))
 
