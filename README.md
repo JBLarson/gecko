@@ -1,6 +1,6 @@
 # Gecko
 
-## Analyze daily prices and 7, 30, 50, and 200-day moving averages
+## Analyze daily prices and 3, 7, 14, 30, 50, 90, and 200-day moving averages
 ## For $BTC, $ETH, $KAVA, $XMR, $ATOM, and $DAI
 #### Data provided by the CoinGecko API using the PyCoinGecko library
 
