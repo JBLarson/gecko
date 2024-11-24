@@ -11,11 +11,17 @@ import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 
 import numpy as np
-import datetime
+from datetime import datetime
 
 
 #lambda functions for rounding
 ro1, ro2, ro6, ro8 = lambda x : round(x, 1), lambda x : round(x, 2), lambda x : round(x, 6), lambda x : round(x, 8)
+
+
+plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))  # Format as 'Year-Month-Day'
+plt.gca().xaxis.set_major_locator(mdates.MonthLocator())  # Show major ticks for each month
+
+plt.gcf().autofmt_xdate()  # Auto-rotate the dates for better readability
 
 
 # import coinGecko data
@@ -41,7 +47,9 @@ def plotTokenFunc(tokenSymbol, startDateIndex, endDateIndex):
 	smaDates, sma7Prices, sma30Prices, sma50Prices, sma200Prices, prices, volumes = [], [], [], [], [], [], []
 
 	for key in movingAvgKeys[startDateIndex:]:
-		smaDates.append(key)
+		date_obj = datetime.strptime(key, "%Y-%m-%d")
+
+		smaDates.append(date_obj)
 		sma7Prices.append(tokenPairMovingAvg7[key])
 		sma30Prices.append(tokenPairMovingAvg30[key])
 		sma50Prices.append(tokenPairMovingAvg50[key])
@@ -90,11 +98,11 @@ def plotTokenFunc(tokenSymbol, startDateIndex, endDateIndex):
 
 
 def getDouble(self):
-    d, okPressed = QInputDialog.getDouble(self,"Date Range","Value:", 180, 0, 365, 0)
-    if okPressed:
-        global sdi
-        sdi = int(-d)
-    return sdi
+	d, okPressed = QInputDialog.getDouble(self,"Date Range","Value:", 180, 0, 365, 0)
+	if okPressed:
+		global sdi
+		sdi = int(-d)
+	return sdi
 #sdi, edi = -90, -1
 edi = -1
 
