@@ -1,6 +1,6 @@
 # Gecko
 
-## Analyze daily prices and 3, 7, 14, 30, 50, 90, and 200-day simple moving averages
+## Simple moving average analysis
 ## For $BTC, $ETH, $KAVA, $XMR, $ATOM, and $DAI
 #### Data provided by the CoinGecko API using the PyCoinGecko library
 
@@ -25,15 +25,3 @@
    * >> ![plot.py screenshot 3](/images/kavaChart.png)
 
 
-## Work in Progress 0: analyzing correlation coefficients
-
-Create and analyze correlation coefficient data with [fetchCC.py](fetchCC.py), [readCC.py](readCC.py), and [plotCC.py](plotCC.py)
-
-## Work in Progress 1: analyzing simple moving avg data
-
-The [algo.py](algo.py) script finds the difference between the various moving averages.
-
-
-Hopefully these numbers can be used to find actionable intelligence.
-
-#### More to come!
